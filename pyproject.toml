@@ -2,7 +2,7 @@
 name = "semantha-streamlit-math"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = ["Niko Dürr <niko@semantha.de>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]

@@ -1,10 +1,10 @@
-import json
+import io
 from typing import Dict
 
-import requests
-from requests import Response
 import pandas as pd
+import semantha_sdk
 import streamlit as st
+from semantha_sdk.model.Document import Document
 
 
 class SemanthaConnectionException(Exception):
@@ -19,41 +19,40 @@ def _build_headers_for_json_request(api_key) -> Dict[str, str]:
     return __headers
 
 
+def _to_text_file(text: str):
+    input_file = io.BytesIO(text.encode("utf-8"))
+    input_file.name = "input.txt"
+    return input_file
+
+
 class Semantha:
     def __init__(self):
+        self.__sdk = semantha_sdk.login(server_url=st.secrets['semantha']['base_url'],
+                                        key=st.secrets['semantha']['api_key'])
         self.__server_base_url = st.secrets['semantha']['base_url']
         self.__api_key = st.secrets['semantha']['api_key']
         self.__domain = st.secrets['semantha']['domain']
 
     def query_library(self, text: str, threshold=0.4, max_references=1, tags=None):
-        url = f"{self.__server_base_url}/api/domains/{self.__domain}/references?maxreferences={max_references}"
-        headers = _build_headers_for_json_request(self.__api_key)
-        payload = {
-            'text': text,
-            'similaritythreshold': str(threshold),
-            'withcontext': str(False)
-        }
-        if tags is not None:
-            payload['tags'] = tags
-        response = requests.post(url, headers=headers, files=payload)
-        if response.status_code != 200:
-            print(response)
-            return {}
-        json_response = json.loads(response.content.decode())
+        doc = self.__sdk.domains.get_one(self.__domain).references.post(file=_to_text_file(text),
+                                                                        similarity_threshold=threshold,
+                                                                        max_references=max_references,
+                                                                        with_context=False,
+                                                                        tags=tags)
         result_dict = {}
-        if 'references' in json_response:
-            for ref in json_response['references']:
-                result_dict[ref['documentId']] = {
-                    "doc_name": self.__get_ref_doc_name(ref['documentId'], self.__domain),
-                    "content": self.__get_document_content(ref['documentId'], self.__domain),
-                    "similarity": float(ref['similarity']),
-                    "metadata": self.__get_ref_doc_metadata(ref['documentId'], self.__domain)
+        if doc.references:
+            for ref in doc.references:
+                result_dict[ref.document_id] = {
+                    "doc_name": self.__get_ref_doc(ref.document_id, self.__domain).name,
+                    "content": self.__get_document_content(ref.document_id, self.__domain),
+                    "similarity": ref.similarity,
+                    "metadata": self.__get_ref_doc(ref.document_id, self.__domain).metadata
                 }
         return self.__get_matches(result_dict)
 
     @staticmethod
     def __get_matches(results):
-      matches = pd.DataFrame.from_records(
+        matches = pd.DataFrame.from_records(
             [
                 [
                     r["doc_name"],
@@ -65,39 +64,17 @@ class Semantha:
             ],
             columns=["Name", "Content", "Similarity", "Metadata"],
         )
-      matches.index = range(1, matches.shape[0] + 1)
-      matches.index.name = "Rank"
-      return matches
+        matches.index = range(1, matches.shape[0] + 1)
+        matches.index.name = "Rank"
+        return matches
 
     def __get_document_content(self, doc_id: str, domain: str) -> str:
-        response = self.__get_ref_doc(doc_id, domain)
-        json_response = json.loads(response.content.decode())
+        doc = self.__get_ref_doc(doc_id, domain)
         content = ""
-        if "pages" in json_response:
-            for page in json_response["pages"]:
-                for c in page["contents"]:
-                    if "paragraphs" in c:
-                        content += "\n".join([par["text"] for par in c["paragraphs"]])
-        else:
-            return ""
+        for p in doc.pages:
+            for c in p.contents:
+                content += "\n".join([par.text for par in c.paragraphs])
         return content
 
-    def __get_ref_doc_name(self, doc_id: str, domain: str) -> str:
-        response = self.__get_ref_doc(doc_id, domain)
-        json_response = json.loads(response.content.decode())
-        return json_response['name']
-
-    def __get_ref_doc_metadata(self, doc_id: str, domain: str) -> str:
-        response = self.__get_ref_doc(doc_id, domain)
-        json_response = json.loads(response.content.decode())
-        return json_response['metadata']
-    
-    def __get_ref_doc(self, doc_id: str, domain: str) -> Response:
-        url = f"{self.__server_base_url}/api/domains/{domain}/referencedocuments/"
-        headers = _build_headers_for_json_request(self.__api_key)
-        response = requests.get(url + doc_id, headers=headers)
-        if response.status_code != 200:
-            raise SemanthaConnectionException(f"Unable to fetch document from Semantha.\n"
-                                              f"Doc id is: {doc_id}\n"
-                                              f"Status code is: {response.status_code}")
-        return response
+    def __get_ref_doc(self, doc_id: str, domain: str) -> Document:
+        return self.__sdk.domains.get_one(domain).reference_documents.get_one(document_id=doc_id)

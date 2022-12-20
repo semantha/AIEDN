@@ -1,22 +1,9 @@
 import io
-from typing import Dict
 
 import pandas as pd
 import semantha_sdk
 import streamlit as st
 from semantha_sdk.model.Document import Document
-
-
-class SemanthaConnectionException(Exception):
-    """SemanthaConnectionException"""
-
-
-def _build_headers_for_json_request(api_key) -> Dict[str, str]:
-    __headers = {
-        'Accept': 'application/json',
-        'Authorization': f'Bearer {api_key}'
-    }
-    return __headers
 
 
 def _to_text_file(text: str):
@@ -29,8 +16,6 @@ class Semantha:
     def __init__(self):
         self.__sdk = semantha_sdk.login(server_url=st.secrets['semantha']['base_url'],
                                         key=st.secrets['semantha']['api_key'])
-        self.__server_base_url = st.secrets['semantha']['base_url']
-        self.__api_key = st.secrets['semantha']['api_key']
         self.__domain = st.secrets['semantha']['domain']
 
     def query_library(self, text: str, threshold=0.4, max_references=1, tags=None):

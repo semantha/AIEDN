@@ -6,8 +6,9 @@ authors = ["Niko Dürr <niko@semantha.de>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9.15"
-streamlit = "1.15.2"
+python = "^3.10"
+semantha_sdk = "4.2.0"
+streamlit= "1.14.0"
 
 [build-system]
 requires = ["poetry-core"]

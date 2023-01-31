@@ -18,10 +18,10 @@ class Semantha:
                                         key=st.secrets['semantha']['api_key'])
         self.__domain = st.secrets['semantha']['domain']
 
-    def query_library(self, text: str, threshold=0.4, max_references=1, tags=None):
+    def query_library(self, text: str, threshold=0.4, max_references=5, tags=None):
         doc = self.__sdk.domains.get_one(self.__domain).references.post(file=_to_text_file(text),
                                                                         similarity_threshold=threshold,
-                                                                        max_references=max_references,
+                                                                        max_references=5,
                                                                         with_context=False,
                                                                         tags=tags)
         result_dict = {}

@@ -38,9 +38,20 @@ if col.button("🔍 Suche"):
             st.error("🦸🏼‍♀️ Ich konnte leider kein passendes Video finden.")
         else:
             st.success("Gefunden! Hier ist dein Ergebnis!", icon='🦸🏼‍♀️')
-            metadata = ast.literal_eval(results.iloc[0]['Metadata'])
-            video_id = metadata['id']
-            start = metadata['start']
-            st.video(video_id, start_time=start)
-            with st.expander("Matches", expanded=False):
-                st.write(results)
+            st.session_state["tabs"] = ["Video #1"]
+            
+            for i, row in results.iterrows():
+                if i >= 2:
+                    st.session_state["tabs"].append(f'Video #{i}')
+                    
+            tabs = st.tabs(st.session_state["tabs"])
+            for i, row in results.iterrows():
+                results.at[i, 'Metadata'] = ast.literal_eval(row['Metadata'])
+                video_id = results.at[i, 'Metadata']['id']
+                start = results.at[i, 'Metadata']['start']
+                content = results.at[i, 'Content']
+                with tabs[i-1]:
+                    st.write(f'Daniel sagt: \"{content}...\"')
+                    st.video(video_id, start_time=start)
+            # with st.expander("Ergebnisse", expanded=False):
+            #     st.write(results)

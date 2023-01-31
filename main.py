@@ -30,6 +30,12 @@ tags = st.multiselect('Wähle deine Themengebiete aus, in denen du suchen möcht
 # lev_conversion = {'Sekundarstufe I': 'Sek I', 'Sekundarstufe II': 'Sek II', 'Studium': 'Studium'}
 # tags = [e.upper() + '+' + lev_conversion[level] for e in tags]
 tags = ','.join(tags).upper() if tags else None
+
+with st.sidebar:
+    st.title('Weitere Wissensquellen')
+    st.write('👥 [Matheforum](https://de.wikipedia.org/wiki/Quadratur_des_Kreises)')
+    st.write('📚 [Matheskript](https://de.wikipedia.org/wiki/Gro%C3%9Fer_Fermatscher_Satz)')
+
 _, _, col, _, _ = st.columns(5)
 if col.button("🔍 Suche"):
     with st.spinner("🦸🏼‍♀️ Ich suche ein passendes Video..."):

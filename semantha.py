@@ -63,3 +63,6 @@ class Semantha:
 
     def __get_ref_doc(self, doc_id: str, domain: str) -> Document:
         return self.__sdk.domains.get_one(domain).reference_documents.get_one(document_id=doc_id)
+
+    def get_sentences(self):
+        pass

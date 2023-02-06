@@ -4,10 +4,20 @@ from dataclasses import dataclass
 
 import pandas as pd
 import streamlit as st
-from tqdm import tqdm
 
 import semantha_sdk
 from semantha_sdk.model import Document
+
+def get_sentences(path: str) -> pd.DataFrame:
+    return pd.read_excel(path)
+
+def merge_sentences(lib: pd.DataFrame) -> pd.DataFrame:
+    lib["Name"] = lib["Name"].apply(lambda name: re.split("_[0-9]+"[0]))
+    merge = defaultdict(lambda: "")
+    for sentence in sentences:
+        merge[sentence.title] += sentence.text
+    return pd.DataFrame({"title": merge.keys(), "content": merge.values()})
+
 
 
 @dataclass

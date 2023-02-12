@@ -43,10 +43,19 @@ with st.sidebar:
     st.write("")
     debug = st.checkbox("🐞 Debug Mode")
 
+    if debug:
+        mode = st.radio(
+            "Retrieval Mode:", ["document_fingerprint", "fingerprint"],
+            index=0
+        )
+    else:
+        mode = "document_fingerprint"
+
 _, _, col, _, _ = st.columns(5)
 if col.button("🔍 Suche"):
     with st.spinner("🦸🏼‍♀️ Ich suche ein passendes Video..."):
-        results = semantha.query_library(search_string, tags=tags)
+        # TODO: Add tags back in
+        results = semantha.query_library(search_string, mode=mode)
         if results.empty:
             st.error("🦸🏼‍♀️ Ich konnte leider kein passendes Video finden.")
         else:

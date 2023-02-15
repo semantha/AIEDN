@@ -5,15 +5,13 @@ from itertools import filterfalse
 import pandas as pd
 import semantha_sdk
 import streamlit as st
-from semantha_sdk.model.Document import Document
+from semantha_sdk.model.document import Document
 
 
 def _to_text_file(text: str):
     input_file = io.BytesIO(text.encode("utf-8"))
     input_file.name = "input.txt"
     return input_file
-
-
 
 
 class Semantha:
@@ -28,7 +26,7 @@ class Semantha:
         if tags:
             raise NotImplementedError(f"Received tags to filter by ({tags}), but we need the single tag the API allows for.")
 
-        sentence_references = self.__sdk.domains.get_one(self.__domain).references.post(
+        sentence_references = self.__sdk.domains(self.__domain).references.post(
             file=_to_text_file(text),
             similarity_threshold=threshold,
             max_references=max_references,
@@ -39,7 +37,7 @@ class Semantha:
         ).references
 
         if mode == "document_fingerprint":
-            video_references = self.__sdk.domains.get_one(self.__domain).references.post(
+            video_references = self.__sdk.domains(self.__domain).references.post(
                 file=_to_text_file(text),
                 similarity_threshold=threshold,
                 max_references=5,
@@ -98,9 +96,7 @@ class Semantha:
         return content
 
     def __get_ref_doc(self, doc_id: str, domain: str) -> Document:
-        return self.__sdk.domains.get_one(domain).reference_documents.get_one(
-            document_id=doc_id
-        )
+        return self.__sdk.domains(domain).reference_documents(doc_id).get()
 
     def __parse(self, key, document):
         document = self.__get_ref_doc(document.document_id, self.__domain)

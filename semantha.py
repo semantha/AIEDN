@@ -1,8 +1,6 @@
 import ast
 import io
-from functools import partial
 from itertools import filterfalse
-from operator import contains
 
 import pandas as pd
 import semantha_sdk

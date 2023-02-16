@@ -22,33 +22,32 @@ class Semantha:
         )
         self.__domain = st.secrets["semantha"]["domain"]
 
-    def query_library(self, text: str, threshold=0.4, max_references=5, tags=[], mode="document_fingerprint"):
-        if tags:
-            raise NotImplementedError(f"Received tags to filter by ({tags}), but we need the single tag the API allows for.")
-
+    def query_library(self, text: str, tags: str, threshold: float = 0.4, max_matches: int = 5,
+                      filter_by_videos: bool = False, filter_size: int = 5):
         sentence_references = self.__sdk.domains(self.__domain).references.post(
             file=_to_text_file(text),
             similarity_threshold=threshold,
-            max_references=max_references,
+            max_references=max_matches,
             with_context=False,
-            # TODO: tags=["SENTENCE_LEVEL"] + tags,
-            tags="SENTENCE_LEVEL",
+            tags="+".join(["SENTENCE_LEVEL"] + [tags]),
             mode="fingerprint"
         ).references
 
-        if mode == "document_fingerprint":
+        if filter_by_videos:
             video_references = self.__sdk.domains(self.__domain).references.post(
                 file=_to_text_file(text),
-                similarity_threshold=threshold,
-                max_references=5,
+                max_references=filter_size,
                 with_context=False,
-                tags="TRANSCRIPT_LEVEL",
+                tags="+".join(["TRANSCRIPT_LEVEL"] + [tags]),
                 mode="document"
             ).references
 
-            video_reference_urls = [self.__parse("id", c) for c in video_references]
+            # Print video matches for debugging purposes
+            # print(f"videos: {[self.__get_ref_doc(ref.document_id, self.__domain).name for ref in video_references]}")
+
+            video_ids = [self.__parse("id", c) for c in video_references]
             sentence_references[:] = filterfalse(
-                lambda sentence: self.__parse("id", sentence) in video_reference_urls,
+                lambda sentence: self.__parse("id", sentence) not in video_ids,
                 sentence_references
             )
 
@@ -99,5 +98,11 @@ class Semantha:
         return self.__sdk.domains(domain).reference_documents(doc_id).get()
 
     def __parse(self, key, document):
+        from urllib.parse import urlparse, parse_qs
         document = self.__get_ref_doc(document.document_id, self.__domain)
-        return ast.literal_eval(document.metadata)[key]
+        value = ast.literal_eval(document.metadata)[key]
+        if key == "id":
+            # parse id from youtube url
+            parse_result = urlparse(value)
+            query_params = parse_qs(parse_result.query)
+            return query_params["v"][0]

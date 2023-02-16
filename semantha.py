@@ -1,21 +1,17 @@
 import ast
 import io
-from functools import partial
 from itertools import filterfalse
-from operator import contains
 
 import pandas as pd
 import semantha_sdk
 import streamlit as st
-from semantha_sdk.model.Document import Document
+from semantha_sdk.model.document import Document
 
 
 def _to_text_file(text: str):
     input_file = io.BytesIO(text.encode("utf-8"))
     input_file.name = "input.txt"
     return input_file
-
-
 
 
 class Semantha:
@@ -28,7 +24,7 @@ class Semantha:
 
     def query_library(self, text: str, tags: str, threshold=0.4, max_references=5,  mode="document_fingerprint",
                       document_filter_size: int = 5, sentence_filter_size: int = 5):
-        sentence_references = self.__sdk.domains.get_one(self.__domain).references.post(
+        sentence_references = self.__sdk.domains(self.__domain).references.post(
             file=_to_text_file(text),
             similarity_threshold=threshold,
             max_references=sentence_filter_size,
@@ -38,7 +34,7 @@ class Semantha:
         ).references
 
         if mode == "document_fingerprint":
-            video_references = self.__sdk.domains.get_one(self.__domain).references.post(
+            video_references = self.__sdk.domains(self.__domain).references.post(
                 file=_to_text_file(text),
                 similarity_threshold=threshold,
                 max_references=document_filter_size,
@@ -100,9 +96,7 @@ class Semantha:
         return content
 
     def __get_ref_doc(self, doc_id: str, domain: str) -> Document:
-        return self.__sdk.domains.get_one(domain).reference_documents.get_one(
-            document_id=doc_id
-        )
+        return self.__sdk.domains(domain).reference_documents(doc_id).get()
 
     def __parse(self, key, document):
         from urllib.parse import urlparse, parse_qs

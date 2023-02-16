@@ -900,14 +900,14 @@ jupyter = ["ipywidgets (>=7.5.1,<9)"]
 
 [[package]]
 name = "semantha-sdk"
-version = "4.5.1"
+version = "4.5.2"
 description = "This is a python client sdk for accessing semantha (the semantic platform)"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "semantha_sdk-4.5.1-py3-none-any.whl", hash = "sha256:108cefda3d743230072a85dd0d217a804de0ba53cb431f24bcdd9ce8a99d7c29"},
-    {file = "semantha_sdk-4.5.1.tar.gz", hash = "sha256:97155bd9a8c3cb793e92e66d95cc55716d0daf32f595bd1f0928be937d4050fa"},
+    {file = "semantha_sdk-4.5.2-py3-none-any.whl", hash = "sha256:5f680f0e95643e4354cf0aa5a6ffb1c1ce93a6a576b3c0745174f7b28d0a33cd"},
+    {file = "semantha_sdk-4.5.2.tar.gz", hash = "sha256:1d6fbb18c66c38d08070a8dcaa58f267f7e24fc1cb53dc9763229be8b76f2b11"},
 ]
 
 [package.dependencies]
@@ -1195,4 +1195,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "a15a735aaf3d0a6b03c6de8837bdcc3ac71425fd2250ea95eaf8d1af73ef2a1d"
+content-hash = "07aae9b47d0c20f8af5140ba5b45edd96b84ae76d88ca2156c40fd688ed5e010"

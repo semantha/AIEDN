@@ -22,22 +22,21 @@ class Semantha:
         )
         self.__domain = st.secrets["semantha"]["domain"]
 
-    def query_library(self, text: str, tags: str, threshold=0.4, max_references=5,  mode="document_fingerprint",
-                      document_filter_size: int = 5, sentence_filter_size: int = 5):
+    def query_library(self, text: str, tags: str, threshold: float = 0.4, max_matches: int = 5,
+                      filter_by_videos: bool = False, filter_size: int = 5):
         sentence_references = self.__sdk.domains(self.__domain).references.post(
             file=_to_text_file(text),
             similarity_threshold=threshold,
-            max_references=sentence_filter_size,
+            max_references=max_matches,
             with_context=False,
             tags="+".join(["SENTENCE_LEVEL"] + [tags]),
             mode="fingerprint"
         ).references
 
-        if mode == "document_fingerprint":
+        if filter_by_videos:
             video_references = self.__sdk.domains(self.__domain).references.post(
                 file=_to_text_file(text),
-                similarity_threshold=threshold,
-                max_references=document_filter_size,
+                max_references=filter_size,
                 with_context=False,
                 tags="+".join(["TRANSCRIPT_LEVEL"] + [tags]),
                 mode="document"

@@ -44,26 +44,24 @@ with st.sidebar:
     debug = st.checkbox("🐞 Debug Mode", value=False)
 
     if debug:
-        mode = st.radio(
-            "Retrieval Mode:", ["document_fingerprint", "fingerprint"],
-            index=0
-        )
-        sentence_filter_size = st.slider("max sentences", min_value=0, max_value=100, value=5)
-        document_filter_size = st.slider("video filter size", min_value=0, max_value=100, value=3)
+        max_matches = st.slider("Maximum matches", min_value=0, max_value=10, value=5)
+
+        filter_by_videos = st.checkbox("Filter by videos", value=True)
+        filter_size = st.slider("Filter size", min_value=0, max_value=10, value=3)
     else:
-        mode = "document_fingerprint"
-        document_filter_size = 5
-        sentence_filter_size = 3
+        max_matches = 5
+        filter_by_videos = True
+        filter_size = 3
 
 _, _, col, _, _ = st.columns(5)
 if col.button("🔍 Suche"):
     with st.spinner("🦸🏼‍♀️ Ich suche ein passendes Video..."):
         results = semantha.query_library(
             search_string,
-            mode=mode,
             tags=tags,
-            document_filter_size=document_filter_size,
-            sentence_filter_size=sentence_filter_size
+            max_matches=max_matches,
+            filter_by_videos=filter_by_videos,
+            filter_size=filter_size
         )
         if results.empty:
             st.error("🦸🏼‍♀️ Ich konnte leider kein passendes Video finden.")

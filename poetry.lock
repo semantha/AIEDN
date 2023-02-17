@@ -256,14 +256,14 @@ smmap = ">=3.0.1,<6"
 
 [[package]]
 name = "gitpython"
-version = "3.1.30"
-description = "GitPython is a python library used to interact with Git repositories"
+version = "3.1.31"
+description = "GitPython is a Python library used to interact with Git repositories"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "GitPython-3.1.30-py3-none-any.whl", hash = "sha256:cd455b0000615c60e286208ba540271af9fe531fa6a87cc590a7298785ab2882"},
-    {file = "GitPython-3.1.30.tar.gz", hash = "sha256:769c2d83e13f5d938b7688479da374c4e3d49f71549aaf462b646db9602ea6f8"},
+    {file = "GitPython-3.1.31-py3-none-any.whl", hash = "sha256:f04893614f6aa713a60cbbe1e6a97403ef633103cdd0ef5eb6efe0deb98dbe8d"},
+    {file = "GitPython-3.1.31.tar.gz", hash = "sha256:8ce3bcf69adfdf7c7d503e78fd3b1c492af782d58893b650adb2ac8912ddd573"},
 ]
 
 [package.dependencies]
@@ -900,14 +900,14 @@ jupyter = ["ipywidgets (>=7.5.1,<9)"]
 
 [[package]]
 name = "semantha-sdk"
-version = "4.5.2"
+version = "4.5.3"
 description = "This is a python client sdk for accessing semantha (the semantic platform)"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "semantha_sdk-4.5.2-py3-none-any.whl", hash = "sha256:5f680f0e95643e4354cf0aa5a6ffb1c1ce93a6a576b3c0745174f7b28d0a33cd"},
-    {file = "semantha_sdk-4.5.2.tar.gz", hash = "sha256:1d6fbb18c66c38d08070a8dcaa58f267f7e24fc1cb53dc9763229be8b76f2b11"},
+    {file = "semantha_sdk-4.5.3-py3-none-any.whl", hash = "sha256:e15ae22d23c9a163d59ff5bba8b10912f9a9ca44afee64e62c9bd54ad0cfdbd6"},
+    {file = "semantha_sdk-4.5.3.tar.gz", hash = "sha256:e80e26dcabeebf57e498c5e0a60a826fe5c291def1f76fe7422d8822255ade09"},
 ]
 
 [package.dependencies]
@@ -1195,4 +1195,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "07aae9b47d0c20f8af5140ba5b45edd96b84ae76d88ca2156c40fd688ed5e010"
+content-hash = "746e732cc484463952c0cf7139486691908c82751772d722b2779e51f140c71d"

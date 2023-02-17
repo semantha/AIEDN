@@ -16,11 +16,13 @@ def _to_text_file(text: str):
 
 class Semantha:
     def __init__(self):
+        semantha_secrets = st.secrets["semantha"]
         self.__sdk = semantha_sdk.login(
-            server_url=st.secrets["semantha"]["base_url"],
-            key=st.secrets["semantha"]["api_key"],
+            server_url=semantha_secrets["base_url"],
+            key=semantha_secrets["api_key"],
         )
-        self.__domain = st.secrets["semantha"]["domain"]
+        self.__domain = semantha_secrets["domain"]
+        self.__tracking_domain = semantha_secrets.get("tracking_domain", default=None)
 
     def query_library(self, text: str, tags: str, threshold: float = 0.4, max_matches: int = 5,
                       filter_by_videos: bool = False, filter_size: int = 5):
@@ -66,6 +68,11 @@ class Semantha:
             }
 
         return self.__get_matches(result_dict)
+
+    def add_to_library(self, content: str, tag: str) -> None:
+        if not self.__tracking_domain:
+            return
+        self.__sdk.domains(self.__tracking_domain).reference_documents.post(file=_to_text_file(content), tags=tag)
 
     @staticmethod
     def __get_matches(results):

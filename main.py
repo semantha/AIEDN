@@ -145,7 +145,7 @@ if st.session_state.page == 2:
                                 category = ", ".join(category)
                                 video = results.at[i, "Name"].split("_")[0]
                                 with tabs[i - 1]:
-                                    st.markdown(f'💬**Daniel sagt:** "_{content}..._"')
+                                    st.markdown(f'💬 **Daniel sagt:** "_{content}..._"')
                                     st.markdown(f"🏷️ **Tags:** _{category}_")
                                     st.video(video_id, start_time=start)
                                     st.markdown(f"📺 **Video:** _{video}_")
@@ -167,7 +167,7 @@ if st.session_state.page == 2:
                                 ]
                                 category = ", ".join(category)
                                 video = results.at[i, "Name"].split("_")[0]
-                                st.markdown(f'💬**Daniel sagt:** "_{content}..._"')
+                                st.markdown(f'💬 **Daniel sagt:** "_{content}..._"')
                                 st.markdown(f"🏷️ **Tags:** _{category}_")
                                 st.video(video_id, start_time=start)
                                 st.markdown(f"📺 **Video:** _{video}_")

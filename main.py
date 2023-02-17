@@ -48,10 +48,12 @@ with st.sidebar:
 
         filter_by_videos = st.checkbox("Filter by videos", value=True)
         filter_size = st.slider("Filter size", min_value=0, max_value=10, value=3)
+        enable_usage_tracking = st.checkbox("Enable usage tracking", value=False)
     else:
         max_matches = 5
         filter_by_videos = True
         filter_size = 3
+        enable_usage_tracking = False
 
 _, _, col, _, _ = st.columns(5)
 if col.button("🔍 Suche"):

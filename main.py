@@ -57,6 +57,8 @@ with st.sidebar:
 
 _, _, col, _, _ = st.columns(5)
 if col.button("🔍 Suche"):
+    # TODO read an pass user ID
+    user_id = "user_id"
     with st.spinner("🦸🏼‍♀️ Ich suche ein passendes Video..."):
         results = semantha.query_library(
             search_string,
@@ -67,8 +69,12 @@ if col.button("🔍 Suche"):
         )
         if results.empty:
             st.error("🦸🏼‍♀️ Ich konnte leider kein passendes Video finden.")
+            if enable_usage_tracking:
+                semantha.add_to_library(content=search_string, tag=user_id + ",no_match")
         else:
             st.success("Gefunden! Hier ist dein Ergebnis!", icon="🦸🏼‍♀️")
+            if enable_usage_tracking:
+                semantha.add_to_library(content=search_string, tag=user_id)
             st.session_state["tabs"] = ["Video #1"]
 
             for i, row in results.iterrows():

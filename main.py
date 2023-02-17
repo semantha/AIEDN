@@ -28,7 +28,7 @@ st.header("🕵🏻 Daniel Jung Mathesuche - AIEDN")
 with st.sidebar:
     st.header("⚙️ Einstellungen")
     st.write("")
-    st.write("Klicke hier um die Seite zu neustarten:")
+    st.write("Klicke hier um die Seite neuzustarten:")
     restart_button = st.button("🔄 Neustart", on_click=restart)
     st.write("")
     debug = st.checkbox("🐞 Debug Mode", value=False)

@@ -23,7 +23,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 # display a title
-st.header("🕵🏻 Daniel Jung Mathesuche - AIEDN")
+st.header("🕵🏻 AIEDN - Daniel Jung Mathesuche")
 
 with st.sidebar:
     st.header("⚙️ Einstellungen")
@@ -38,15 +38,11 @@ with st.sidebar:
         filter_by_videos = st.checkbox("Filter by videos", value=True)
         filter_size = st.slider("Filter size", min_value=0, max_value=10, value=3)
         enable_usage_tracking = st.checkbox("Enable usage tracking", value=False)
-        show_videos_below_each_other = st.checkbox(
-            "Show videos below each other", value=False
-        )
     else:
         max_matches = 5
         filter_by_videos = True
         filter_size = 3
         enable_usage_tracking = False
-        show_videos_below_each_other = False
 
 
 placeholder = st.empty()
@@ -149,29 +145,6 @@ if st.session_state.page == 2:
                                     st.markdown(f"🏷️ **Tags:** _{category}_")
                                     st.video(video_id, start_time=start)
                                     st.markdown(f"📺 **Video:** _{video}_")
-                            if debug:
-                                with st.expander("Ergebnisse", expanded=False):
-                                    st.write(results)
-
-                        else:
-                            for i, row in results.iterrows():
-                                results.at[i, "Metadata"] = ast.literal_eval(
-                                    row["Metadata"]
-                                )
-                                video_id = results.at[i, "Metadata"]["id"]
-                                start = results.at[i, "Metadata"]["start"]
-                                content = results.at[i, "Content"]
-                                category = results.at[i, "Tags"]
-                                category = [
-                                    tag for tag in category if tag not in ["base", "11"]
-                                ]
-                                category = ", ".join(category)
-                                video = results.at[i, "Name"].split("_")[0]
-                                st.markdown(f'💬 **Daniel sagt:** "_{content}..._"')
-                                st.markdown(f"🏷️ **Tags:** _{category}_")
-                                st.video(video_id, start_time=start)
-                                st.markdown(f"📺 **Video:** _{video}_")
-
                             if debug:
                                 with st.expander("Ergebnisse", expanded=False):
                                     st.write(results)

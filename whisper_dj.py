@@ -95,7 +95,7 @@ def sentence_splitting(text: str):
     )
     sentences = []
     for pages in j[0].pages:
-        for contents in pages.contents:
+        for contents in page_views.contents:
             for paragraphs in contents.paragraphs:
                 for sentence in paragraphs.sentences:
                     sentences.append(sentence.text)

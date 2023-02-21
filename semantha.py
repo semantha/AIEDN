@@ -46,12 +46,12 @@ class Semantha:
 
             # Print video matches for debugging purposes
             # print(f"videos: {[self.__get_ref_doc(ref.document_id, self.__domain).name for ref in video_references]}")
-
-            video_ids = [self.__parse("id", c) for c in video_references]
-            sentence_references[:] = filterfalse(
-                lambda sentence: self.__parse("id", sentence) not in video_ids,
-                sentence_references
-            )
+            if video_references is not None:
+                video_ids = [self.__parse("id", c) for c in video_references]
+                sentence_references[:] = filterfalse(
+                    lambda sentence: self.__parse("id", sentence) not in video_ids,
+                    sentence_references
+                )
 
         result_dict = {}
         for candidate in sentence_references:

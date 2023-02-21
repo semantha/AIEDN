@@ -84,14 +84,15 @@ class SearchPage(AbstractPage):
     def __display_result(self, results, i, row, tabs):
         results.at[i, "Metadata"] = ast.literal_eval(row["Metadata"])
         video_id = results.at[i, "Metadata"]["id"]
-        start = results.at[i, "Metadata"]["start"]
+        start = 0 if st.session_state.control else results.at[i, "Metadata"]["start"]
         content = results.at[i, "Content"]
         category = results.at[i, "Tags"]
         category = [tag for tag in category if tag not in ["base", "11"]]
         category = ", ".join(category)
         video = results.at[i, "Name"].split("_")[0]
         with tabs[i - 1]:
-            st.markdown(f'💬 **Daniel sagt:** "_{content}..._"')
+            if not st.session_state.control:
+                st.markdown(f'💬 **Daniel sagt:** "_{content}..._"')
             st.markdown(f"🏷️ **Tags:** _{category}_")
             st.video(video_id, start_time=start)
             st.markdown(f"📺 **Video:** _{video}_")

@@ -1,3 +1,6 @@
+import json
+import os
+
 from page_views.abstract_page import AbstractPage
 import streamlit as st
 
@@ -6,6 +9,8 @@ class EntryPage(AbstractPage):
     def __init__(self, page_id, page_manager):
         super().__init__(page_id)
         self.page_manager = page_manager
+        with open(os.path.join(os.getcwd(), "ids", "ids.json")) as fp:
+            self.user_ids = json.load(fp)
 
     def display_page(self):
         st.write(
@@ -16,8 +21,10 @@ class EntryPage(AbstractPage):
             user_id = st.text_input(
                 "Studien-ID",
                 key="user_id_text_input",
+                value="igCY5s4YztSjvswBfHARLm", # In experimental group
+                # value="UiiZP2HjUSNCSLFyZjwk3J", # In control group
                 type="default",
-                max_chars=12,
+                max_chars=22,
             )
 
             _, _, col, _, _ = st.columns(5)
@@ -29,12 +36,12 @@ class EntryPage(AbstractPage):
             self.submit_form(user_id)
 
     def submit_form(self, user_id):
-        # TODO sanity check ID
         st.session_state.user_id = user_id
+        st.session_state.control = self.user_ids[user_id]
         self.page_manager.nextpage()
 
     def check_user_id(self, user_id):
-        if user_id == "hyper":
+        if user_id not in self.user_ids.keys():
             st.error("Bitte gib eine gültige Studien-ID an.", icon="🕵🏻")
             return False
         return True

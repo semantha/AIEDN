@@ -26,32 +26,42 @@ class Semantha:
 
     def query_library(self, text: str, tags: str, threshold: float = 0.4, max_matches: int = 5,
                       filter_by_videos: bool = False, filter_size: int = 5):
-        sentence_references = self.__sdk.domains(self.__domain).references.post(
-            file=_to_text_file(text),
-            similarity_threshold=threshold,
-            max_references=max_matches,
-            with_context=False,
-            tags="+".join(["SENTENCE_LEVEL"] + [tags]),
-            mode="fingerprint"
-        ).references
-
-        if filter_by_videos:
-            video_references = self.__sdk.domains(self.__domain).references.post(
+        if st.session_state.control:
+            sentence_references = self.__sdk.domains(self.__domain).references.post(
                 file=_to_text_file(text),
-                max_references=filter_size,
+                similarity_threshold=threshold,
+                max_references=max_matches,
                 with_context=False,
-                tags="+".join(["TRANSCRIPT_LEVEL"] + [tags]),
+                tags="+".join(["CONTROL"] + [tags]),
                 mode="document"
             ).references
+        else:
+            sentence_references = self.__sdk.domains(self.__domain).references.post(
+                file=_to_text_file(text),
+                similarity_threshold=threshold,
+                max_references=max_matches,
+                with_context=False,
+                tags="+".join(["SENTENCE_LEVEL"] + [tags]),
+                mode="fingerprint"
+            ).references
 
-            # Print video matches for debugging purposes
-            # print(f"videos: {[self.__get_ref_doc(ref.document_id, self.__domain).name for ref in video_references]}")
-            if video_references is not None:
-                video_ids = [self.__parse("id", c) for c in video_references]
-                sentence_references[:] = filterfalse(
-                    lambda sentence: self.__parse("id", sentence) not in video_ids,
-                    sentence_references
-                )
+            if filter_by_videos:
+                video_references = self.__sdk.domains(self.__domain).references.post(
+                    file=_to_text_file(text),
+                    max_references=filter_size,
+                    with_context=False,
+                    tags="+".join(["TRANSCRIPT_LEVEL"] + [tags]),
+                    mode="document"
+                ).references
+
+                # Print video matches for debugging purposes
+                # print(f"videos: {[self.__get_ref_doc(ref.document_id, self.__domain).name for ref in video_references]}")
+                if video_references is not None:
+                    video_ids = [self.__parse("id", c) for c in video_references]
+                    sentence_references[:] = filterfalse(
+                        lambda sentence: self.__parse("id", sentence) not in video_ids,
+                        sentence_references
+                    )
 
         result_dict = {}
         for candidate in sentence_references:
@@ -64,7 +74,7 @@ class Semantha:
                 "metadata": self.__get_ref_doc(
                     candidate.document_id, self.__domain
                 ).metadata,
-                "tags": set(self.__get_ref_doc(candidate.document_id, self.__domain).tags) - {"TRANSCRIPT_LEVEL", "SENTENCE_LEVEL"},
+                "tags": set(self.__get_ref_doc(candidate.document_id, self.__domain).tags) - {"TRANSCRIPT_LEVEL", "SENTENCE_LEVEL", "CONTROL"},
             }
 
         return self.__get_matches(result_dict)

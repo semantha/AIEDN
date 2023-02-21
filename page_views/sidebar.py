@@ -32,7 +32,7 @@ class Sidebar(AbstractPage):
             st.header("⚙️ Einstellungen")
             st.write("")
             st.write("Klicke hier um die Seite neuzustarten:")
-            st.button("🔄 Neustart", on_click=self.page_manager.restart)
+            st.button("🔄 Neustart", on_click=self.restart)
             st.write("")
             self.debug = st.checkbox("🐞 Debug Mode", value=False)
             if self.debug:
@@ -47,3 +47,7 @@ class Sidebar(AbstractPage):
                 self.enable_usage_tracking = st.checkbox(
                     "Enable usage tracking", value=False
                 )
+
+    def restart(self):
+        st.session_state.clear()
+        self.page_manager.restart()

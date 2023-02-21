@@ -11,7 +11,6 @@ class SearchPage(AbstractPage):
         self.semantha = semantha
 
     def display_page(self):
-        print(st.session_state.user_id)
         # display a description of your app
         st.write(
             "Gib deine Mathefrage ein und ich werde Dir eine passende Stelle von einem Daniel Jung Video anzeigen."

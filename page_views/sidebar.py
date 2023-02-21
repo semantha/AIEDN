@@ -9,7 +9,7 @@ class Sidebar(AbstractPage):
         self.max_matches = 5
         self.filter_by_videos = True
         self.filter_size = 3
-        self.enable_usage_tracking = False
+        self.enable_usage_tracking = True
         self.debug = False
 
     def get_max_matches(self):
@@ -47,7 +47,7 @@ class Sidebar(AbstractPage):
                     "Filter size", min_value=0, max_value=10, value=3
                 )
                 self.enable_usage_tracking = st.checkbox(
-                    "Enable usage tracking", value=False
+                    "Enable usage tracking", value=True
                 )
                 st.markdown("**ID CG**: _UiiZP2HjUSNCSLFyZjwk3J_")
                 st.markdown("**ID EG**: _igCY5s4YztSjvswBfHARLm_")

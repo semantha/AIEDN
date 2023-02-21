@@ -17,16 +17,29 @@ class SearchPage(AbstractPage):
         )
         # display a search input
         with st.form(key="search_form"):
+            search_string = self.__search_form()
+            _, _, col, _, _ = st.columns(5)
+            button = col.form_submit_button("🔍 Suche")
+        if button:
+            self.__search(search_string)
+
+    def __search_form(self):
+        if st.session_state.control:
+            search_string = st.text_input(
+                label="Suche",
+                value="",
+                placeholder="Gib hier deine Stichwörter ein...",
+                label_visibility="collapsed",
+            )
+        else:
             search_string = st.text_area(
                 label="Suche",
                 value="",
                 placeholder="Gib hier deine Frage ein...",
                 label_visibility="collapsed",
             )
-            _, _, col, _, _ = st.columns(5)
-            button = col.form_submit_button("🔍 Suche")
-        if button:
-            self.__search(search_string)
+
+        return search_string
 
     def __search(self, search_string):
         tags = "base,11"

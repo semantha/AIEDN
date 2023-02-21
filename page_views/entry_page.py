@@ -25,10 +25,16 @@ class EntryPage(AbstractPage):
                 "✅ Bestätigen", help="Klicke hier um deine ID zu bestätigen."
             )
 
-        if button:
+        if button and self.check_user_id(user_id):
             self.submit_form(user_id)
 
     def submit_form(self, user_id):
         # TODO sanity check ID
         st.session_state.user_id = user_id
         self.page_manager.nextpage()
+
+    def check_user_id(self, user_id):
+        if user_id == "hyper":
+            st.error("Bitte gib eine gültige Studien-ID an.")
+            return False
+        return True

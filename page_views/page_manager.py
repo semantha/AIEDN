@@ -13,3 +13,7 @@ class PageManager:
     @staticmethod
     def restart():
         st.session_state.page = 0
+
+    @staticmethod
+    def show_video_page():
+        st.session_state.page = 1

@@ -35,6 +35,6 @@ class EntryPage(AbstractPage):
 
     def check_user_id(self, user_id):
         if user_id == "hyper":
-            st.error("Bitte gib eine gültige Studien-ID an.")
+            st.error("Bitte gib eine gültige Studien-ID an.", icon="🕵🏻")
             return False
         return True

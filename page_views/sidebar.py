@@ -47,7 +47,9 @@ class Sidebar(AbstractPage):
                 self.enable_usage_tracking = st.checkbox(
                     "Enable usage tracking", value=False
                 )
-                st.checkbox("control group", key="control", value=True)
+                st.write("control group: UiiZP2HjUSNCSLFyZjwk3J")
+                st.write("experimental group: igCY5s4YztSjvswBfHARLm")
+                # st.checkbox("control group", key="control", value=True)
 
     def restart(self):
         st.session_state.clear()

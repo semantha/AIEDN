@@ -10,11 +10,11 @@ class VideoPage(AbstractPage):
     def __init__(self, page_id, page_manager):
         super().__init__(page_id)
         self.page_manager = page_manager
-        self.video_url = self.choose_video()
 
     def display_page(self):
         st.success("🕵🏻 Vielen Dank, wir zeigen dir nun ein kurzes Erklärvideo.")
-        st.video(self.video_url)
+        video_url = self.choose_video()
+        st.video(video_url)
         _, _, col, _, _ = st.columns(5)
         time.sleep(5)
         col.button(

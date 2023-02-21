@@ -11,6 +11,7 @@ class SearchPage(AbstractPage):
         self.semantha = semantha
 
     def display_page(self):
+        print(st.session_state.user_id)
         # display a description of your app
         st.write(
             "Gib deine Mathefrage ein und ich werde Dir eine passende Stelle von einem Daniel Jung Video anzeigen."
@@ -52,7 +53,9 @@ class SearchPage(AbstractPage):
     def __match_handling(self, search_string, results):
         st.success("Gefunden! Hier ist dein Ergebnis!", icon="🕵🏻")
         if self.sidebar.get_enable_usage_tracking():
-            self.semantha.add_to_library(content=search_string, tag=self.user_id)
+            self.semantha.add_to_library(
+                content=search_string, tag=st.session_state.user_id
+            )
 
         st.session_state["tabs"] = ["Video #1"]
         for i, row in results.iterrows():
@@ -76,7 +79,7 @@ class SearchPage(AbstractPage):
         )
         if self.sidebar.get_enable_usage_tracking():
             self.semantha.add_to_library(
-                content=search_string, tag=self.user_id + ",no_match"
+                content=search_string, tag=st.session_state.user_id + ",no_match"
             )
 
     def __display_result(self, results, i, row, tabs):
@@ -93,6 +96,3 @@ class SearchPage(AbstractPage):
             st.markdown(f"🏷️ **Tags:** _{category}_")
             st.video(video_id, start_time=start)
             st.markdown(f"📺 **Video:** _{video}_")
-
-    def set_user_id(self, user_id):
-        self.user_id = user_id

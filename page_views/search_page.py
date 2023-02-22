@@ -66,7 +66,7 @@ class SearchPage(AbstractPage):
                 self.__match_handling(search_string, results)
 
     def __match_handling(self, search_string, results):
-        st.success("Gefunden! Hier ist dein Ergebnis!", icon="🕵🏻")
+        st.success(f"Erledigt! Ich habe {len(results)} passende Videos für dich gefunden!", icon="🕵🏻")
         if self.sidebar.get_enable_usage_tracking():
             self.semantha.add_to_library(
                 content=search_string, tag=st.session_state.user_id

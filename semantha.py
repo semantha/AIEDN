@@ -21,19 +21,19 @@ class RankingStrategy:
         self._semantha = semantha
 
     @abstractmethod
-    def rank(self, sentence_references, video_references=None) -> list:
+    def rank(self, sentence_references, video_references=None, alpha=0.7) -> list:
         raise NotImplementedError("Abstract method")
 
 
 class DenseOnlyRanking(RankingStrategy):
 
-    def rank(self, sentence_references, video_references=None) -> list:
+    def rank(self, sentence_references, video_references=None, alpha=0.7, sparse_filter_size=5) -> list:
         return sentence_references
 
 
 class SparseFilterDenseRanking(RankingStrategy):
 
-    def rank(self, sentence_references, video_references=None) -> list:
+    def rank(self, sentence_references, video_references=None, alpha=0.7, sparse_filter_size=5) -> list:
         if video_references is None:
             return sentence_references
         else:
@@ -47,8 +47,20 @@ class SparseFilterDenseRanking(RankingStrategy):
 
 class HybridRanking(RankingStrategy):
 
-    def rank(self, sentence_references, video_references=None) -> list:
-        pass
+    def rank(self, sentence_references, video_references=None, alpha=0.7, sparse_filter_size=5) -> list:
+        if video_references is None:
+            return sentence_references
+        else:
+            scored = []
+            video_ids = [self._semantha.parse("id", c) for c in video_references]
+            for i, sr in enumerate(sentence_references):
+                self._semantha.parse("id", sr)
+                sentence_id = self._semantha.parse("id", sr)
+                video_rank = video_ids.index(sentence_id) if sentence_id in video_ids else None
+                score = (1/(i + 1)) + (0 if video_rank is None else (alpha * 1/(video_rank + 1)))
+                scored.append((score, sr))
+            scored.sort(key=lambda a: a[0], reverse=True)
+            return [x for _, x in scored]
 
 
 class Semantha:
@@ -67,7 +79,8 @@ class Semantha:
                       threshold: float = 0.4,
                       max_matches: int = 5,
                       ranking_strategy: RankingStrategy.__class__ = DenseOnlyRanking,
-                      sparse_filter_size: int = 5):
+                      sparse_filter_size: int = 5,
+                      alpha=0.7):
         if st.session_state.control:
             sentence_references = self.__get_sentence_refs_control(text, tags, threshold, max_matches)
         else:
@@ -78,7 +91,7 @@ class Semantha:
                 video_references = self.__get_video_refs_aiedn(text, tags, sparse_filter_size)
 
             ranker = ranking_strategy(self)
-            sentence_references = ranker.rank(sentence_references, video_references)
+            sentence_references = ranker.rank(sentence_references, video_references, alpha, sparse_filter_size)
 
         result_dict = {}
         for candidate in sentence_references:

@@ -15,6 +15,7 @@ class Sidebar(AbstractPage):
         self.max_matches = 5
         self.ranking_strategy = _DENSE_ONLY_RANKING
         self.filter_size = 3
+        self.alpha = 0.7
         self.enable_usage_tracking = True
         self.debug = False
 
@@ -33,6 +34,9 @@ class Sidebar(AbstractPage):
 
     def get_filter_size(self):
         return self.filter_size
+
+    def get_alpha(self):
+        return self.alpha
 
     def get_enable_usage_tracking(self):
         return self.enable_usage_tracking
@@ -63,6 +67,10 @@ class Sidebar(AbstractPage):
                 if self.ranking_strategy == _SPARSE_FILTER_DENSE_RANKING or self.ranking_strategy == _HYBRID_RANKING:
                     self.filter_size = st.slider(
                         "Sparse filter size", min_value=0, max_value=10, value=3
+                    )
+                if self.ranking_strategy == _HYBRID_RANKING:
+                    self.alpha = st.slider(
+                        "Alpha", min_value=0.0, max_value=2.0, step=0.05, value=0.7
                     )
                 st.markdown("**ID CG**: _UiiZP2HjUSNCSLFyZjwk3J_")
                 st.markdown("**ID EG**: _igCY5s4YztSjvswBfHARLm_")

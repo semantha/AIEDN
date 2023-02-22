@@ -2,6 +2,8 @@ import ast
 from page_views.abstract_page import AbstractPage
 import streamlit as st
 
+from semantha import DenseOnlyRanking
+
 
 class SearchPage(AbstractPage):
     def __init__(self, page_id, page_manager, sidebar, semantha):
@@ -54,8 +56,8 @@ class SearchPage(AbstractPage):
                 search_string,
                 tags=tags,
                 max_matches=self.sidebar.get_max_matches(),
-                filter_by_videos=self.sidebar.get_filter_by_videos(),
-                filter_size=self.sidebar.get_filter_size(),
+                ranking_strategy=self.sidebar.get_ranking_strategy(),
+                sparse_filter_size=self.sidebar.get_filter_size(),
             )
             if results.empty:
                 self.__no_match_handling(search_string)

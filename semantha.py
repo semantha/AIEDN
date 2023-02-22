@@ -1,5 +1,6 @@
 import ast
 import io
+from abc import abstractmethod
 from itertools import filterfalse
 
 import pandas as pd
@@ -14,6 +15,42 @@ def _to_text_file(text: str):
     return input_file
 
 
+class RankingStrategy:
+
+    def __init__(self, semantha):
+        self._semantha = semantha
+
+    @abstractmethod
+    def rank(self, sentence_references, video_references=None) -> list:
+        raise NotImplementedError("Abstract method")
+
+
+class DenseOnlyRanking(RankingStrategy):
+
+    def rank(self, sentence_references, video_references=None) -> list:
+        return sentence_references
+
+
+class SparseFilterDenseRanking(RankingStrategy):
+
+    def rank(self, sentence_references, video_references=None) -> list:
+        if video_references is None:
+            return sentence_references
+        else:
+            video_ids = [self._semantha.parse("id", c) for c in video_references]
+            sentence_references[:] = filterfalse(
+                lambda sentence: self._semantha.parse("id", sentence) not in video_ids,
+                sentence_references
+            )
+            return sentence_references
+
+
+class HybridRanking(RankingStrategy):
+
+    def rank(self, sentence_references, video_references=None) -> list:
+        pass
+
+
 class Semantha:
     def __init__(self):
         semantha_secrets = st.secrets["semantha"]
@@ -24,44 +61,24 @@ class Semantha:
         self.__domain = semantha_secrets["domain"]
         self.__tracking_domain = semantha_secrets.get("tracking_domain", default=None)
 
-    def query_library(self, text: str, tags: str, threshold: float = 0.4, max_matches: int = 5,
-                      filter_by_videos: bool = False, filter_size: int = 5):
+    def query_library(self,
+                      text: str,
+                      tags: str,
+                      threshold: float = 0.4,
+                      max_matches: int = 5,
+                      ranking_strategy: RankingStrategy.__class__ = DenseOnlyRanking,
+                      sparse_filter_size: int = 5):
         if st.session_state.control:
-            sentence_references = self.__sdk.domains(self.__domain).references.post(
-                file=_to_text_file(text),
-                similarity_threshold=threshold,
-                max_references=max_matches,
-                with_context=False,
-                tags="+".join(["CONTROL"] + [tags]),
-                mode="document"
-            ).references
+            sentence_references = self.__get_sentence_refs_control(text, tags, threshold, max_matches)
         else:
-            sentence_references = self.__sdk.domains(self.__domain).references.post(
-                file=_to_text_file(text),
-                similarity_threshold=threshold,
-                max_references=max_matches,
-                with_context=False,
-                tags="+".join(["SENTENCE_LEVEL"] + [tags]),
-                mode="fingerprint"
-            ).references
+            sentence_references = self.__get_sentence_refs_aiedn(text, tags, threshold, max_matches)
 
-            if filter_by_videos:
-                video_references = self.__sdk.domains(self.__domain).references.post(
-                    file=_to_text_file(text),
-                    max_references=filter_size,
-                    with_context=False,
-                    tags="+".join(["TRANSCRIPT_LEVEL"] + [tags]),
-                    mode="document"
-                ).references
+            video_references = None
+            if ranking_strategy is SparseFilterDenseRanking or ranking_strategy is HybridRanking:
+                video_references = self.__get_video_refs_aiedn(text, tags, sparse_filter_size)
 
-                # Print video matches for debugging purposes
-                # print(f"videos: {[self.__get_ref_doc(ref.document_id, self.__domain).name for ref in video_references]}")
-                if video_references is not None:
-                    video_ids = [self.__parse("id", c) for c in video_references]
-                    sentence_references[:] = filterfalse(
-                        lambda sentence: self.__parse("id", sentence) not in video_ids,
-                        sentence_references
-                    )
+            ranker = ranking_strategy(self)
+            sentence_references = ranker.rank(sentence_references, video_references)
 
         result_dict = {}
         for candidate in sentence_references:
@@ -78,6 +95,35 @@ class Semantha:
             }
 
         return self.__get_matches(result_dict)
+
+    def __get_sentence_refs_control(self, text: str, tags: str, threshold: float, max_matches: int):
+        return self.__sdk.domains(self.__domain).references.post(
+                file=_to_text_file(text),
+                similarity_threshold=threshold,
+                max_references=max_matches,
+                with_context=False,
+                tags="+".join(["CONTROL"] + [tags]),
+                mode="document"
+            ).references
+
+    def __get_sentence_refs_aiedn(self, text: str, tags: str, threshold: float, max_matches: int):
+        return self.__sdk.domains(self.__domain).references.post(
+                file=_to_text_file(text),
+                similarity_threshold=threshold,
+                max_references=max_matches,
+                with_context=False,
+                tags="+".join(["SENTENCE_LEVEL"] + [tags]),
+                mode="fingerprint"
+            ).references
+
+    def __get_video_refs_aiedn(self, text: str, tags: str, sparse_filter_size: int):
+        return self.__sdk.domains(self.__domain).references.post(
+                    file=_to_text_file(text),
+                    max_references=sparse_filter_size,
+                    with_context=False,
+                    tags="+".join(["TRANSCRIPT_LEVEL"] + [tags]),
+                    mode="document"
+                ).references
 
     def add_to_library(self, content: str, tag: str) -> None:
         if not self.__tracking_domain:
@@ -114,7 +160,7 @@ class Semantha:
     def __get_ref_doc(self, doc_id: str, domain: str) -> Document:
         return self.__sdk.domains(domain).reference_documents(doc_id).get()
 
-    def __parse(self, key, document):
+    def parse(self, key, document):
         from urllib.parse import urlparse, parse_qs
         document = self.__get_ref_doc(document.document_id, self.__domain)
         value = ast.literal_eval(document.metadata)[key]

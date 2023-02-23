@@ -83,13 +83,13 @@ class SearchPage(AbstractPage):
                 content=search_string, tag=st.session_state.user_id
             )
 
-        st.session_state["tabs"] = ["Video #1"]
         if not self.sidebar.show_videos_below_each_other:
+            st.session_state["tabs"] = ["Video #1"]
             for i, row in results.iterrows():
                 if i >= 2:
                     st.session_state["tabs"].append(f"Video #{i}")
 
-        tabs = st.tabs(st.session_state["tabs"])
+            tabs = st.tabs(st.session_state["tabs"])
         for i, row in results.iterrows():
             if self.sidebar.show_videos_below_each_other:
                 self.__display_results_below_each_other(results, i, row)
@@ -142,10 +142,10 @@ class SearchPage(AbstractPage):
         st.markdown(f"🏷️ **Tags:** _{category}_")
         st.video(video_id, start_time=start)
         st.markdown(f"📺 **Video:** _{video}_")
-        if i > 1:
+        if i >= 1:
             st.write("")
             st.write("")
             st.markdown(
-                """<hr style="height:10px;border:none;color:#333;background-color:#333;" /> """,
+                """<hr style="height:2px;border:none;color:#333;background-color:#333;" /> """,
                 unsafe_allow_html=True,
             )

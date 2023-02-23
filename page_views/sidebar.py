@@ -59,7 +59,7 @@ class Sidebar(AbstractPage):
             st.header("⚙️ Einstellungen")
             st.write("Klicke hier um die Seite neuzustarten:")
             if st.session_state.page >= 2:
-                st.button("📹 Video", on_click=self.show_video_page)
+                st.button("📹 Video", on_click=self.__show_video_page)
             st.button("🔄 Neustart", on_click=self.restart)
             self.__show_horizontal_line()
             self.__debug = st.checkbox("🐞 Debug Mode", value=False)
@@ -111,5 +111,5 @@ class Sidebar(AbstractPage):
         st.session_state.clear()
         self.__page_manager.restart()
 
-    def show_video_page(self):
+    def __show_video_page(self):
         st.session_state.page = 1

@@ -12,7 +12,6 @@ class SearchPage(AbstractPage):
         self.__dummy = ""
 
     def display_page(self):
-        # display a description of your app
         st.write(
             "Gib deine Mathefrage ein und ich werde Dir eine passende Stelle von einem Daniel Jung Video anzeigen."
         )
@@ -79,7 +78,7 @@ class SearchPage(AbstractPage):
 
     def __match_handling(self, search_string, results):
         st.success(
-            f"Erledigt! Ich habe {len(results)} passende Videos für dich gefunden!",
+            f"Erledigt! Ich habe **{len(results)}** passende Videos für dich gefunden!",
             icon="🕵🏻",
         )
         if self.__sidebar.get_enable_usage_tracking():

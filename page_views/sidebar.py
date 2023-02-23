@@ -83,7 +83,6 @@ class Sidebar(AbstractPage):
             "Show videos below each other", value=True
         )
         self.__show_horizontal_line()
-        # self.filter_by_videos = st.checkbox("Filter by videos", value=True)
         self.__ranking_strategy = st.radio(
             "Ranking Strategy",
             options=[

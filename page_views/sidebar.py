@@ -19,7 +19,7 @@ class Sidebar(AbstractPage):
         self.enable_usage_tracking = True
         self.enter_to_submit = True
         self.debug = False
-        self.show_videos_below_each_other = False
+        self.show_videos_below_each_other = True
 
     def get_max_matches(self):
         return self.max_matches
@@ -70,7 +70,7 @@ class Sidebar(AbstractPage):
                     "Maximum matches", min_value=0, max_value=10, value=5
                 )
                 self.show_videos_below_each_other = st.checkbox(
-                    "Show videos below each other", value=False
+                    "Show videos below each other", value=True
                 )
 
                 # self.filter_by_videos = st.checkbox("Filter by videos", value=True)

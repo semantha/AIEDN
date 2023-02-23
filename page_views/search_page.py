@@ -145,6 +145,6 @@ class SearchPage(AbstractPage):
         if i >= 1 and i < len(results):
             st.write("")
             st.markdown(
-                """<hr style="height:2px;border:none;color:#BE25BE;background-color:#BE25BE;" /> """,
+                """<hr style="height:2px;border:none;color:#333;background-color:#333;" /> """,
                 unsafe_allow_html=True,
             )

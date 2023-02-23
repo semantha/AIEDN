@@ -66,7 +66,7 @@ class SearchPage(AbstractPage):
                 max_matches=self.sidebar.get_max_matches(),
                 ranking_strategy=self.sidebar.get_ranking_strategy(),
                 sparse_filter_size=self.sidebar.get_filter_size(),
-                alpha=self.sidebar.get_alpha()
+                alpha=self.sidebar.get_alpha(),
             )
             if results.empty:
                 self.__no_match_handling(search_string)
@@ -74,7 +74,10 @@ class SearchPage(AbstractPage):
                 self.__match_handling(search_string, results)
 
     def __match_handling(self, search_string, results):
-        st.success(f"Erledigt! Ich habe {len(results)} passende Videos für dich gefunden!", icon="🕵🏻")
+        st.success(
+            f"Erledigt! Ich habe {len(results)} passende Videos für dich gefunden!",
+            icon="🕵🏻",
+        )
         if self.sidebar.get_enable_usage_tracking():
             self.semantha.add_to_library(
                 content=search_string, tag=st.session_state.user_id
@@ -87,7 +90,10 @@ class SearchPage(AbstractPage):
 
         tabs = st.tabs(st.session_state["tabs"])
         for i, row in results.iterrows():
-            self.__display_result(results, i, row, tabs)
+            if self.sidebar.show_videos_below_each_other:
+                self.__display_results_below_each_other(results, i, row)
+            else:
+                self.__display_result_in_tabs(results, i, row, tabs)
         if self.sidebar.get_debug():
             self.__debug_view(results)
 
@@ -105,7 +111,7 @@ class SearchPage(AbstractPage):
                 content=search_string, tag=st.session_state.user_id + ",no_match"
             )
 
-    def __display_result(self, results, i, row, tabs):
+    def __display_result_in_tabs(self, results, i, row, tabs):
         results.at[i, "Metadata"] = ast.literal_eval(row["Metadata"])
         video_id = results.at[i, "Metadata"]["id"]
         start = 0 if st.session_state.control else results.at[i, "Metadata"]["start"]
@@ -120,3 +126,17 @@ class SearchPage(AbstractPage):
             st.markdown(f"🏷️ **Tags:** _{category}_")
             st.video(video_id, start_time=start)
             st.markdown(f"📺 **Video:** _{video}_")
+
+    def __display_results_below_each_other(self, results, i, row):
+        results.at[i, "Metadata"] = ast.literal_eval(row["Metadata"])
+        video_id = results.at[i, "Metadata"]["id"]
+        start = results.at[i, "Metadata"]["start"]
+        content = results.at[i, "Content"]
+        category = results.at[i, "Tags"]
+        category = [tag for tag in category if tag not in ["base", "11"]]
+        category = ", ".join(category)
+        video = results.at[i, "Name"].split("_")[0]
+        st.markdown(f'💬 **Daniel sagt:** "_{content}..._"')
+        st.markdown(f"🏷️ **Tags:** _{category}_")
+        st.video(video_id, start_time=start)
+        st.markdown(f"📺 **Video:** _{video}_")

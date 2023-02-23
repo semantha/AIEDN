@@ -84,9 +84,10 @@ class SearchPage(AbstractPage):
             )
 
         st.session_state["tabs"] = ["Video #1"]
-        for i, row in results.iterrows():
-            if i >= 2:
-                st.session_state["tabs"].append(f"Video #{i}")
+        if not self.sidebar.show_videos_below_each_other:
+            for i, row in results.iterrows():
+                if i >= 2:
+                    st.session_state["tabs"].append(f"Video #{i}")
 
         tabs = st.tabs(st.session_state["tabs"])
         for i, row in results.iterrows():
@@ -136,7 +137,15 @@ class SearchPage(AbstractPage):
         category = [tag for tag in category if tag not in ["base", "11"]]
         category = ", ".join(category)
         video = results.at[i, "Name"].split("_")[0]
+        st.subheader(f"Video #{i}")
         st.markdown(f'💬 **Daniel sagt:** "_{content}..._"')
         st.markdown(f"🏷️ **Tags:** _{category}_")
         st.video(video_id, start_time=start)
         st.markdown(f"📺 **Video:** _{video}_")
+        if i > 1:
+            st.write("")
+            st.write("")
+            st.markdown(
+                """<hr style="height:10px;border:none;color:#333;background-color:#333;" /> """,
+                unsafe_allow_html=True,
+            )

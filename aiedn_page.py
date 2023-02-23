@@ -10,31 +10,24 @@ from semantha import Semantha
 
 class AIEDNPage:
     def __init__(self):
-        self.semantha = Semantha()
-        self.page_manager = PageManager()
-        self.sidebar = Sidebar(-1, self.page_manager)
-        self.entry_page = EntryPage(0, self.page_manager, self.sidebar)
-        self.video_page = VideoPage(1, self.page_manager)
-        self.search_page = SearchPage(2, self.page_manager, self.sidebar, self.semantha)
-        self.pages = [self.entry_page, self.video_page, self.search_page]
-        self.page_dic = {page.get_page_id(): page for page in self.pages}
+        self.__semantha = Semantha()
+        self.__page_manager = PageManager()
+        self.__sidebar = Sidebar(self.__page_manager)
+        self.__entry_page = EntryPage(self.__page_manager, self.__sidebar)
+        self.__video_page = VideoPage(self.__page_manager)
+        self.__search_page = SearchPage(self.__sidebar, self.__semantha)
+        self.__pages = [self.__entry_page, self.__video_page, self.__search_page]
 
     def display_page(self):
         self.__configure_page()
-        self.sidebar.display_page()
+        self.__sidebar.display_page()
 
         placeholder = st.empty()
-        if st.session_state.page == 0:
-            with placeholder.container():
-                self.entry_page.display_page()
 
-        if st.session_state.page == 1:
-            with placeholder.container():
-                self.video_page.display_page()
-
-        if st.session_state.page == 2:
-            with placeholder.container():
-                self.search_page.display_page()
+        for i in range(len(self.__pages)):
+            if st.session_state.page == i:
+                with placeholder.container():
+                    self.__pages[i].display_page()
 
     @staticmethod
     def __configure_page():

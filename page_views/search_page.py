@@ -144,7 +144,6 @@ class SearchPage(AbstractPage):
         st.markdown(f"📺 **Video:** _{video}_")
         if i >= 1 and i < len(results):
             st.write("")
-            st.write("")
             st.markdown(
                 """<hr style="height:2px;border:none;color:#BE25BE;background-color:#BE25BE;" /> """,
                 unsafe_allow_html=True,

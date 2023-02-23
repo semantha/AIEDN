@@ -11,6 +11,7 @@ class SearchPage(AbstractPage):
         self.page_manager = page_manager
         self.sidebar = sidebar
         self.semantha = semantha
+        self.__dummy = ""
 
     def display_page(self):
         # display a description of your app
@@ -18,12 +19,19 @@ class SearchPage(AbstractPage):
             "Gib deine Mathefrage ein und ich werde Dir eine passende Stelle von einem Daniel Jung Video anzeigen."
         )
         # display a search input
-        with st.form(key="search_form"):
+        if self.sidebar.enter_to_submit:
             search_string = self.__search_form()
             _, _, col, _, _ = st.columns(5)
-            button = col.form_submit_button("🔍 Suche")
-        if button:
-            self.__search(search_string)
+            button = col.button("🔍 Suche")
+            if button or self.__dummy != search_string:
+                self.__search(search_string)
+        else:
+            with st.form(key="search_form"):
+                search_string = self.__search_form()
+                _, _, col, _, _ = st.columns(5)
+                button = col.form_submit_button("🔍 Suche")
+            if button:
+                self.__search(search_string)
 
     def __search_form(self):
         if st.session_state.control:

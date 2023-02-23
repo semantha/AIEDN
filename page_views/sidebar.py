@@ -17,6 +17,7 @@ class Sidebar(AbstractPage):
         self.filter_size = 3
         self.alpha = 0.7
         self.enable_usage_tracking = True
+        self.enter_to_submit = True
         self.debug = False
 
     def get_max_matches(self):
@@ -44,6 +45,9 @@ class Sidebar(AbstractPage):
     def get_debug(self):
         return self.debug
 
+    def get_enter_to_submit(self):
+        return self.enter_to_submit
+
     def display_page(self):
         with st.sidebar:
             st.header("⚙️ Einstellungen")
@@ -55,6 +59,9 @@ class Sidebar(AbstractPage):
             st.write("")
             self.debug = st.checkbox("🐞 Debug Mode", value=False)
             if self.debug:
+                self.enter_to_submit = st.checkbox(
+                    "Enable 'Press Enter to Submit'", value=True
+                )
                 self.enable_usage_tracking = st.checkbox(
                     "Enable usage tracking", value=True
                 )

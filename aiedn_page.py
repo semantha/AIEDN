@@ -13,7 +13,7 @@ class AIEDNPage:
         self.semantha = Semantha()
         self.page_manager = PageManager()
         self.sidebar = Sidebar(-1, self.page_manager)
-        self.entry_page = EntryPage(0, self.page_manager)
+        self.entry_page = EntryPage(0, self.page_manager, self.sidebar)
         self.video_page = VideoPage(1, self.page_manager)
         self.search_page = SearchPage(2, self.page_manager, self.sidebar, self.semantha)
         self.pages = [self.entry_page, self.video_page, self.search_page]

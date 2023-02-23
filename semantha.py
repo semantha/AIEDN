@@ -34,7 +34,7 @@ class DenseOnlyRanking(RankingStrategy):
 class SparseFilterDenseRanking(RankingStrategy):
 
     def rank(self, sentence_references, video_references=None, alpha=0.7, sparse_filter_size=5) -> list:
-        if video_references is None:
+        if video_references is None or sentence_references is None or len(sentence_references) == 0:
             return sentence_references
         else:
             video_ids = [self._semantha.parse("id", c) for c in video_references]
@@ -48,7 +48,7 @@ class SparseFilterDenseRanking(RankingStrategy):
 class HybridRanking(RankingStrategy):
 
     def rank(self, sentence_references, video_references=None, alpha=0.7, sparse_filter_size=5) -> list:
-        if video_references is None:
+        if video_references is None or sentence_references is None or len(sentence_references):
             return sentence_references
         else:
             scored = []
@@ -94,18 +94,19 @@ class Semantha:
             sentence_references = ranker.rank(sentence_references, video_references, alpha, sparse_filter_size)
 
         result_dict = {}
-        for candidate in sentence_references:
-            result_dict[candidate.document_id] = {
-                "doc_name": self.__get_ref_doc(candidate.document_id, self.__domain).name,
-                "content": self.__get_document_content(
-                    candidate.document_id, self.__domain
-                ),
-                "similarity": candidate.similarity,
-                "metadata": self.__get_ref_doc(
-                    candidate.document_id, self.__domain
-                ).metadata,
-                "tags": set(self.__get_ref_doc(candidate.document_id, self.__domain).tags) - {"TRANSCRIPT_LEVEL", "SENTENCE_LEVEL", "CONTROL"},
-            }
+        if sentence_references is not None:
+            for candidate in sentence_references:
+                result_dict[candidate.document_id] = {
+                    "doc_name": self.__get_ref_doc(candidate.document_id, self.__domain).name,
+                    "content": self.__get_document_content(
+                        candidate.document_id, self.__domain
+                    ),
+                    "similarity": candidate.similarity,
+                    "metadata": self.__get_ref_doc(
+                        candidate.document_id, self.__domain
+                    ).metadata,
+                    "tags": set(self.__get_ref_doc(candidate.document_id, self.__domain).tags) - {"TRANSCRIPT_LEVEL", "SENTENCE_LEVEL", "CONTROL"},
+                }
 
         return self.__get_matches(result_dict)
 

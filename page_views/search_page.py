@@ -115,6 +115,7 @@ class SearchPage(AbstractPage):
                 else:
                     present[video_id].append(start)
                     video_rank[video_id] = i
+        return results
 
     def __debug_view(self, results):
         with st.expander("Ergebnisse", expanded=False):

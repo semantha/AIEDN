@@ -104,7 +104,9 @@ class SearchPage(AbstractPage):
         present = {}
         video_rank = {}
         for i, row in results.iterrows():
-            video_id, start, tags = self.__extract_metadata_info(row)
+            results.at[i, "Metadata"] = ast.literal_eval(row["Metadata"])
+            metadata = results.at[i, "Metadata"]
+            video_id, start, tags = self.__extract_metadata_info(row, metadata)
             if video_id in present:
                 if start in present[video_id]:
                     # add the tags to the existing row
@@ -163,16 +165,16 @@ class SearchPage(AbstractPage):
         st.markdown(f"📺 **Video:** _{video}_")
 
     def __get_result_info(self, results, i, row):
-        results.at[i, "Metadata"] = ast.literal_eval(row["Metadata"])
-        video_id, start, category = self.__extract_metadata_info(row)
+        metadata = results.at[i, "Metadata"]
+        video_id, start, category = self.__extract_metadata_info(row, metadata)
         content = row["Content"]
         video = row["Name"].split("_")[0]
         category = [tag for tag in category if tag not in ["base", "11"]]
         category = ", ".join(category)
         return video_id, start, content, category, video
 
-    def __extract_metadata_info(self, row):
-        video_id = row["Metadata"]["id"]
-        start = 0 if st.session_state.control else row["Metadata"]["start"]
-        tags = row["Metadata"]["Tags"]
+    def __extract_metadata_info(self, row, metadata):
+        video_id = metadata["id"]
+        start = 0 if st.session_state.control else metadata["start"]
+        tags = row["Tags"]
         return video_id, start, tags

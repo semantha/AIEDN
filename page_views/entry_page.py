@@ -15,39 +15,41 @@ class EntryPage(AbstractPage):
             self.__user_ids = json.load(fp)
 
     def display_page(self):
-        st.write(
-            "Herzlich Willkommen zu unserer Studie, gib uns zunächst bitte deine Studien-ID an."
-        )
-        if self.__sidebar.get_enter_to_submit():
-            user_id = st.text_input(
-                "Studien-ID",
-                key="user_id_text_input",
-                value="",
-                type="default",
-                max_chars=7,
+        placeholder = st.empty()
+        with placeholder.container():
+            st.write(
+                "Herzlich Willkommen zu unserer Studie, gib uns zunächst bitte deine Studien-ID an."
             )
-            _, _, col, _, _ = st.columns(5)
-            button = col.button(
-                "✅ Bestätigen", help="Klicke hier um deine ID zu bestätigen."
-            )
-            if (button or self.__dummy != user_id) and self.__check_user_id(user_id):
-                self.__dummy = user_id
-                self.__submit_form(user_id)
-        else:
-            with st.form(key="user_id_form"):
+            if self.__sidebar.get_enter_to_submit():
                 user_id = st.text_input(
                     "Studien-ID",
                     key="user_id_text_input",
                     value="",
                     type="default",
-                    max_chars=22,
+                    max_chars=7,
                 )
                 _, _, col, _, _ = st.columns(5)
-                button = col.form_submit_button(
+                button = col.button(
                     "✅ Bestätigen", help="Klicke hier um deine ID zu bestätigen."
                 )
-                if button and self.__check_user_id(user_id):
+                if (button or self.__dummy != user_id) and self.__check_user_id(user_id):
+                    self.__dummy = user_id
                     self.__submit_form(user_id)
+            else:
+                with st.form(key="user_id_form"):
+                    user_id = st.text_input(
+                        "Studien-ID",
+                        key="user_id_text_input",
+                        value="",
+                        type="default",
+                        max_chars=22,
+                    )
+                    _, _, col, _, _ = st.columns(5)
+                    button = col.form_submit_button(
+                        "✅ Bestätigen", help="Klicke hier um deine ID zu bestätigen."
+                    )
+                    if button and self.__check_user_id(user_id):
+                        self.__submit_form(user_id)
 
     def __submit_form(self, user_id):
         st.session_state.user_id = user_id

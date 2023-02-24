@@ -101,16 +101,20 @@ class SearchPage(AbstractPage):
             self.__debug_view(results)
 
     def __handle_duplicates(self, results):
-        new_results = {}
         present = {}
+        video_rank = {}
         for i, row in results.iterrows():
-            video_id, start, category = self.__extract_metadata_info(results, i, row)
-            if (video_id, start) in present:
-                new_results[present[(video_id, start)]]["Tags"].update(category)
-            else:
-                new_results[i] = row
-                present[(video_id, start)] = i
-        return new_results
+            video_id, start, tags = self.__extract_metadata_info(results, i, row)
+            if video_id in present:
+                if start in present[video_id]:
+                    # add the tags to the existing row
+                    tags = ast.literal_eval(results.at[video_rank[video_id], "Tags"])
+                    tags.extend(ast.literal_eval(row["Tags"]))
+                    results.at[video_rank[video_id], "Tags"] = str(tags)
+                    results = results.drop(i)
+                else:
+                    present[video_id].append(start)
+                    video_rank[video_id] = i
 
     def __debug_view(self, results):
         with st.expander("Ergebnisse", expanded=False):
@@ -171,5 +175,4 @@ class SearchPage(AbstractPage):
         start = 0 if st.session_state.control else results.at[i, "Metadata"]["start"]
 
         tags = results.at[i, "Tags"]
-
         return video_id, start, tags

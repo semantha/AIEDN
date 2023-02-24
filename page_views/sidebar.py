@@ -68,8 +68,8 @@ class Sidebar(AbstractPage):
 
     def __debug_information(self):
         st.subheader("🐞 Debug Settings")
-        st.markdown("**ID CG**: _UiiZP2HjUSNCSLFyZjwk3J_")
-        st.markdown("**ID EG**: _igCY5s4YztSjvswBfHARLm_")
+        st.markdown("**ID CG**: _UiiZP2H")
+        st.markdown("**ID EG**: _igCY5s4")
         self.__show_horizontal_line()
         self.__enter_to_submit = st.checkbox(
             "Enable 'Press Enter to Submit'", value=True

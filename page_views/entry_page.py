@@ -24,7 +24,7 @@ class EntryPage(AbstractPage):
                 key="user_id_text_input",
                 value="",
                 type="default",
-                max_chars=22,
+                max_chars=7,
             )
             _, _, col, _, _ = st.columns(5)
             button = col.button(

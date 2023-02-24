@@ -88,10 +88,10 @@ class SearchPage(AbstractPage):
             )
 
         if not self.__sidebar.get_show_videos_below_each_other():
-            st.session_state["tabs"] = ["Video #1"]
+            st.session_state["tabs"] = ["Video 1"]
             for i, row in results.iterrows():
                 if i >= 2:
-                    st.session_state["tabs"].append(f"Video #{i}")
+                    st.session_state["tabs"].append(f"Video {i}")
 
             tabs = st.tabs(st.session_state["tabs"])
         for i, row in results.iterrows():
@@ -130,10 +130,13 @@ class SearchPage(AbstractPage):
         st.subheader(f"Video {i} von {len(results)}")
         self.__display_video(video_id, start, content, category, video)
         if i >= 1 and i < len(results):
-            st.markdown(
-                """<hr style="height:2px;border:none;color:#333;background-color:#333;" /> """,
-                unsafe_allow_html=True,
-            )
+            self.__display_horizontal_line()
+
+    def __display_horizontal_line(self):
+        st.markdown(
+            """<hr style="height:2px;border:none;color:#333;background-color:#333;" /> """,
+            unsafe_allow_html=True,
+        )
 
     def __display_video(self, video_id, start, content, category, video):
         if not st.session_state.control:

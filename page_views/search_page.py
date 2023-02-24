@@ -77,8 +77,9 @@ class SearchPage(AbstractPage):
                 self.__match_handling(search_string, results)
 
     def __match_handling(self, search_string, results):
+        video_string = "passendes Video" if len(results) == 1 else "passende Videos"
         st.success(
-            f"Erledigt! Ich habe **{len(results)}** passende Videos für dich gefunden!",
+            f"Erledigt! Ich habe **{len(results)}** {video_string} für dich gefunden!",
             icon="🕵🏻",
         )
         if self.__sidebar.get_enable_usage_tracking():

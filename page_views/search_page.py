@@ -106,7 +106,7 @@ class SearchPage(AbstractPage):
         for i, row in results.iterrows():
             video_id, start, category = self.__extract_metadata_info(results, i, row)
             if (video_id, start) in present:
-                new_results[present[(video_id, start)]]["tags"] += ", " + category
+                new_results[present[(video_id, start)]]["Tags"] += ", " + category
             else:
                 new_results[i] = row
                 present[(video_id, start)] = i

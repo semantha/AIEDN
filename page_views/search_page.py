@@ -2,8 +2,6 @@ import ast
 from page_views.abstract_page import AbstractPage
 import streamlit as st
 
-from semantha import DenseOnlyRanking
-
 
 class SearchPage(AbstractPage):
     def __init__(self, sidebar, semantha):
@@ -77,6 +75,7 @@ class SearchPage(AbstractPage):
                 self.__match_handling(search_string, results)
 
     def __match_handling(self, search_string, results):
+        results = self.__remove_duplicates(results)
         video_string = "passendes Video" if len(results) == 1 else "passende Videos"
         st.success(
             f"Erledigt! Ich habe **{len(results)}** {video_string} für dich gefunden!",
@@ -101,6 +100,9 @@ class SearchPage(AbstractPage):
                 self.__display_result_in_tabs(results, i, row, tabs)
         if self.__sidebar.get_debug():
             self.__debug_view(results)
+
+    def __remove_duplicates(self, results):
+        return results.drop_duplicates(subset=["video_id", "start"], keep="first")
 
     def __debug_view(self, results):
         with st.expander("Ergebnisse", expanded=False):

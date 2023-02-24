@@ -126,7 +126,7 @@ class SearchPage(AbstractPage):
         video_id, start, content, category, video = self.__get_result_info(
             results, i, row
         )
-        st.subheader(f"Video #{i} von {len(results)}")
+        st.subheader(f"Video {i} von {len(results)}")
         self.__display_video(video_id, start, content, category, video)
         if i >= 1 and i < len(results):
             st.markdown(

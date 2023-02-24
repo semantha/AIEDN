@@ -108,7 +108,7 @@ class SearchPage(AbstractPage):
             if video_id in present:
                 if start in present[video_id]:
                     # add the tags to the existing row
-                    tags = ast.literal_eval(results.at[video_rank[video_id], "Tags"])
+                    tags = results.at[video_rank[video_id], "Tags"]
                     tags.extend(ast.literal_eval(row["Tags"]))
                     results.at[video_rank[video_id], "Tags"] = str(tags)
                     results = results.drop(i)
@@ -163,6 +163,7 @@ class SearchPage(AbstractPage):
         st.markdown(f"📺 **Video:** _{video}_")
 
     def __get_result_info(self, results, i, row):
+        results.at[i, "Metadata"] = ast.literal_eval(row["Metadata"])
         video_id, start, category = self.__extract_metadata_info(results, i, row)
         content = results.at[i, "Content"]
         video = results.at[i, "Name"].split("_")[0]
@@ -171,9 +172,7 @@ class SearchPage(AbstractPage):
         return video_id, start, content, category, video
 
     def __extract_metadata_info(self, results, i, row):
-        results.at[i, "Metadata"] = ast.literal_eval(row["Metadata"])
         video_id = results.at[i, "Metadata"]["id"]
         start = 0 if st.session_state.control else results.at[i, "Metadata"]["start"]
-
         tags = results.at[i, "Tags"]
         return video_id, start, tags

@@ -11,7 +11,7 @@ class EntryPage(AbstractPage):
         self.page_manager = page_manager
         self.dummy = ""
         self.sidebar = sidebar
-        with open(os.path.join(os.getcwd(), "ids", "ids.json")) as fp:
+        with open(os.path.join(os.getcwd(), "ids", "provided_ids.json")) as fp:
             self.user_ids = json.load(fp)
 
     def display_page(self):

@@ -84,8 +84,9 @@ class Semantha:
                       sparse_filter_size: int = 5,
                       alpha=0.7):
         logging.info(f"Search query: '{text}'")
-        # print(f"Search query: '{text}'")
         search_start = perf_counter()
+        ranking_start = None
+        ranking_end = None
         if st.session_state.control:
             sentence_references = self.__get_sentence_refs_control(text, tags, threshold, max_matches)
         else:
@@ -114,7 +115,8 @@ class Semantha:
                 }
         search_end = perf_counter()
         logging.info(f"Search took {search_end - search_start} seconds.")
-        logging.info(f"Ranking using {ranking_strategy.__name__} strategy took {ranking_end - ranking_start} seconds.")
+        if ranking_start is not None and ranking_end is not None:
+            logging.info(f"Ranking using {ranking_strategy.__name__} strategy took {ranking_end - ranking_start} seconds.")
 
         return self.__get_matches(result_dict)
 

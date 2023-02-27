@@ -1,7 +1,9 @@
 import ast
 import io
+import logging
 from abc import abstractmethod
 from itertools import filterfalse
+from time import perf_counter
 
 import pandas as pd
 import semantha_sdk
@@ -81,6 +83,9 @@ class Semantha:
                       ranking_strategy: RankingStrategy.__class__ = DenseOnlyRanking,
                       sparse_filter_size: int = 5,
                       alpha=0.7):
+        logging.info(f"Search query: '{text}'")
+        # print(f"Search query: '{text}'")
+        search_start = perf_counter()
         if st.session_state.control:
             sentence_references = self.__get_sentence_refs_control(text, tags, threshold, max_matches)
         else:
@@ -91,22 +96,25 @@ class Semantha:
                 video_references = self.__get_video_refs_aiedn(text, tags, sparse_filter_size)
 
             ranker = ranking_strategy(self)
+            ranking_start = perf_counter()
             sentence_references = ranker.rank(sentence_references, video_references, alpha, sparse_filter_size)
+            ranking_end = perf_counter()
 
         result_dict = {}
+        logging.info(f"Found {len(sentence_references)} matches.")
         if sentence_references is not None:
             for candidate in sentence_references:
+                __ref_doc = self.__get_ref_doc(candidate.document_id, self.__domain)
                 result_dict[candidate.document_id] = {
-                    "doc_name": self.__get_ref_doc(candidate.document_id, self.__domain).name,
-                    "content": self.__get_document_content(
-                        candidate.document_id, self.__domain
-                    ),
+                    "doc_name": __ref_doc.name,
+                    "content": self.__get_document_content(__ref_doc),
                     "similarity": candidate.similarity,
-                    "metadata": self.__get_ref_doc(
-                        candidate.document_id, self.__domain
-                    ).metadata,
-                    "tags": set(self.__get_ref_doc(candidate.document_id, self.__domain).tags) - {"TRANSCRIPT_LEVEL", "SENTENCE_LEVEL", "CONTROL"},
+                    "metadata": __ref_doc.metadata,
+                    "tags": set(__ref_doc.tags) - {"TRANSCRIPT_LEVEL", "SENTENCE_LEVEL", "CONTROL"},
                 }
+        search_end = perf_counter()
+        logging.info(f"Search took {search_end - search_start} seconds.")
+        logging.info(f"Ranking using {ranking_strategy.__name__} strategy took {ranking_end - ranking_start} seconds.")
 
         return self.__get_matches(result_dict)
 
@@ -163,8 +171,7 @@ class Semantha:
         matches.index.name = "Rank"
         return matches
 
-    def __get_document_content(self, doc_id: str, domain: str) -> str:
-        doc = self.__get_ref_doc(doc_id, domain)
+    def __get_document_content(self, doc: Document) -> str:
         content = ""
         for p in doc.pages:
             for c in p.contents:

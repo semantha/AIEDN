@@ -21,7 +21,14 @@ class VideoPage(AbstractPage):
     def display_page(self):
         st.success("🕵🏻 Vielen Dank, wir zeigen dir nun ein kurzes Erklärvideo.")
         video_url, video_length = self.__choose_video()
-        st_player(video_url, height=400)
+        st_player(video_url, height=400, playing=True, config={
+            "vimeo": {
+                "playerOptions": {
+                    "color": "#BE25BE",
+                    "title": False,
+                }
+            }
+        })
         _, _, col, _, _ = st.columns(5)
         if st.session_state.video_first_time and not self.__sidebar.get_video_skippable():
             time.sleep(video_length)

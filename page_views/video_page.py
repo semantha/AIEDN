@@ -1,23 +1,29 @@
 import time
-from page_views.abstract_page import AbstractPage
-import streamlit as st
 
-_CONTROL_GROUP_VIDEO = "https://www.youtube.com/watch?v=NseWRQ1JYoM"
-_EXPERIMENTAL_GROUP_VIDEO = "https://www.youtube.com/watch?v=7Twnmhe948A"
-_EXPERIMENTAL_GROUP_VIDEO_LENGTH = 5
+import streamlit as st
+from streamlit_player import st_player
+
+from page_views.abstract_page import AbstractPage
+
+_CONTROL_GROUP_VIDEO = "https://vimeo.com/803009708"
+_EXPERIMENTAL_GROUP_VIDEO = "https://vimeo.com/803009422"
+_EXPERIMENTAL_GROUP_VIDEO_LENGTH = 80
 _CONTROL_GROUP_VIDEO_LENGTH = 5
 
 
 class VideoPage(AbstractPage):
     def __init__(self, page_manager):
         self.__page_manager = page_manager
+        st.session_state.video_first_time = True
 
     def display_page(self):
         st.success("🕵🏻 Vielen Dank, wir zeigen dir nun ein kurzes Erklärvideo.")
         video_url, video_length = self.__choose_video()
-        st.video(video_url)
+        st_player(video_url, height=400)
         _, _, col, _, _ = st.columns(5)
-        time.sleep(video_length)
+        if st.session_state.video_first_time:
+            time.sleep(video_length)
+        st.session_state.video_first_time = False
         col.button(
             "⏭️ Weiter",
             on_click=self.__page_manager.nextpage,

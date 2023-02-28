@@ -1,8 +1,11 @@
 import ast
-from page_views.abstract_page import AbstractPage
-import streamlit as st
 
-from semantha import DenseOnlyRanking
+import streamlit as st
+from streamlit_player import st_player
+
+from page_views.abstract_page import AbstractPage
+
+import time
 
 
 class SearchPage(AbstractPage):
@@ -142,7 +145,14 @@ class SearchPage(AbstractPage):
         if not st.session_state.control:
             st.markdown(f'💬 **Daniel sagt:** "_{content}..._"')
         st.markdown(f"🏷️ **Tags:** _{category}_")
-        st.video(video_id, start_time=start)
+        st_player(f"{str(video_id)}?#t={start}s", height=400, key=f"{video_id}_{time.time_ns()}", config={
+            "vimeo": {
+                "playerOptions": {
+                    "color": "#BE25BE",
+                    "title": False,
+                }
+            }
+        })
         st.markdown(f"📺 **Video:** _{video}_")
 
     def __get_result_info(self, results, i, row):

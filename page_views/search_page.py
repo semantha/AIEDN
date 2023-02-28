@@ -73,6 +73,7 @@ class SearchPage(AbstractPage):
                 ranking_strategy=self.__sidebar.get_ranking_strategy(),
                 sparse_filter_size=self.__sidebar.get_filter_size(),
                 alpha=self.__sidebar.get_alpha(),
+                filter_duplicates=self.__sidebar.get_filter_duplicates()
             )
             if results.empty:
                 self.__no_match_handling(search_string)

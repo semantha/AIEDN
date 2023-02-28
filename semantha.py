@@ -82,7 +82,8 @@ class Semantha:
                       max_matches: int = 5,
                       ranking_strategy: RankingStrategy.__class__ = DenseOnlyRanking,
                       sparse_filter_size: int = 5,
-                      alpha=0.7):
+                      alpha=0.7,
+                      filter_duplicates=False):
         logging.info(f"Search query: '{text}'")
         search_start = perf_counter()
         ranking_start = None
@@ -120,6 +121,8 @@ class Semantha:
                         "metadata": __ref_doc.metadata,
                         "tags": set(__ref_doc.tags) - {"TRANSCRIPT_LEVEL", "SENTENCE_LEVEL", "CONTROL"},
                     }
+        if filter_duplicates:
+            result_dict = self.__filter_duplicates(result_dict)
         search_end = perf_counter()
         logging.info(f"Search took {search_end - search_start} seconds.")
         if ranking_start is not None and ranking_end is not None:
@@ -199,3 +202,16 @@ class Semantha:
             parse_result = urlparse(value)
             query_params = parse_qs(parse_result.query)
             return query_params["v"][0]
+
+    def __filter_duplicates(self, result_dict):
+        __seen_video_ids = []
+        __filtered_sentence_references = {}
+        for e in result_dict:
+            entry = ast.literal_eval(result_dict[e]["metadata"])
+            if entry["id"] not in __seen_video_ids:
+                __seen_video_ids.append(entry["id"])
+                __filtered_sentence_references[e] = result_dict[e]
+            else:
+                logging.info(f"Found duplicate: {entry['id']}. Removing...")
+        logging.info(f"After duplicate filtering {len(__filtered_sentence_references)} matches remain.")
+        return __filtered_sentence_references

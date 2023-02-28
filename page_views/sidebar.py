@@ -21,6 +21,7 @@ class Sidebar(AbstractPage):
         self.__enable_usage_tracking = True
         self.__enter_to_submit = True
         self.__debug = False
+        self.__filter_duplicates = True
         self.__show_videos_below_each_other = True
         self.__video_skippable = False
 
@@ -49,6 +50,9 @@ class Sidebar(AbstractPage):
     def get_debug(self):
         return self.__debug
 
+    def get_filter_duplicates(self):
+        return self.__filter_duplicates
+
     def get_enter_to_submit(self):
         return self.__enter_to_submit
 
@@ -75,6 +79,9 @@ class Sidebar(AbstractPage):
         st.markdown("**ID CG**: _UiiZP2H_")
         st.markdown("**ID EG**: _igCY5s4_")
         self.__show_horizontal_line()
+        self.__filter_duplicates = st.checkbox(
+            "Filter Duplicates (Videos Matches w/ Same ID and Timestamp)", value=True
+        )
         self.__enter_to_submit = st.checkbox(
             "Enable 'Press Enter to Submit'", value=True
         )

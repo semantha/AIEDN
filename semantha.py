@@ -164,7 +164,7 @@ class Semantha:
             [
                 [
                     r["doc_name"],
-                    r["content"].replace("\n", "<br>"),
+                    r["content"].replace("\n", " "),
                     int(round(r["similarity"], 2) * 100),
                     r["metadata"],
                     r["tags"],

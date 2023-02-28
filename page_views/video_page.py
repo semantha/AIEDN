@@ -12,8 +12,9 @@ _CONTROL_GROUP_VIDEO_LENGTH = 75
 
 
 class VideoPage(AbstractPage):
-    def __init__(self, page_manager):
+    def __init__(self, page_manager, sidebar):
         self.__page_manager = page_manager
+        self.__sidebar = sidebar
         if "video_first_time" not in st.session_state:
             st.session_state.video_first_time = True
 
@@ -22,7 +23,7 @@ class VideoPage(AbstractPage):
         video_url, video_length = self.__choose_video()
         st_player(video_url, height=400)
         _, _, col, _, _ = st.columns(5)
-        if st.session_state.video_first_time:
+        if st.session_state.video_first_time and not self.__sidebar.get_video_skippable():
             time.sleep(video_length)
         st.session_state.video_first_time = False
         col.button(

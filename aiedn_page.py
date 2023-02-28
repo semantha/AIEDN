@@ -14,7 +14,7 @@ class AIEDNPage:
         self.__page_manager = PageManager()
         self.__sidebar = Sidebar(self.__page_manager)
         self.__entry_page = EntryPage(self.__page_manager, self.__sidebar)
-        self.__video_page = VideoPage(self.__page_manager)
+        self.__video_page = VideoPage(self.__page_manager, self.__sidebar)
         self.__search_page = SearchPage(self.__sidebar, self.__semantha)
         self.__pages = [self.__entry_page, self.__video_page, self.__search_page]
 

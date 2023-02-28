@@ -102,21 +102,24 @@ class Semantha:
             ranking_end = perf_counter()
 
         result_dict = {}
-        logging.info(f"Found {len(sentence_references)} matches.")
-        filtered_lib = self.__sdk.domains(self.__domain).reference_documents \
-            .get(offset=0,
-                 limit=len(sentence_references),
-                 filter_document_ids=",".join([str(sr.document_id) for sr in sentence_references]),
-                 return_fields="id,contentpreview,tags,metadata,name")
-        if filtered_lib is not None and len(filtered_lib.documents) > 0:
-            for idx, __ref_doc in enumerate(filtered_lib.documents):
-                result_dict[__ref_doc.id] = {
-                    "doc_name": __ref_doc.name,
-                    "content": __ref_doc.content_preview,
-                    "similarity": sentence_references[idx].similarity,
-                    "metadata": __ref_doc.metadata,
-                    "tags": set(__ref_doc.tags) - {"TRANSCRIPT_LEVEL", "SENTENCE_LEVEL", "CONTROL"},
-                }
+        if sentence_references is None:
+            logging.info(f"No matches found!")
+        else:
+            logging.info(f"Found {len(sentence_references)} matches.")
+            filtered_lib = self.__sdk.domains(self.__domain).reference_documents \
+                .get(offset=0,
+                     limit=len(sentence_references),
+                     filter_document_ids=",".join([str(sr.document_id) for sr in sentence_references]),
+                     return_fields="id,contentpreview,tags,metadata,name")
+            if filtered_lib is not None and len(filtered_lib.documents) > 0:
+                for idx, __ref_doc in enumerate(filtered_lib.documents):
+                    result_dict[__ref_doc.id] = {
+                        "doc_name": __ref_doc.name,
+                        "content": __ref_doc.content_preview,
+                        "similarity": sentence_references[idx].similarity,
+                        "metadata": __ref_doc.metadata,
+                        "tags": set(__ref_doc.tags) - {"TRANSCRIPT_LEVEL", "SENTENCE_LEVEL", "CONTROL"},
+                    }
         search_end = perf_counter()
         logging.info(f"Search took {search_end - search_start} seconds.")
         if ranking_start is not None and ranking_end is not None:

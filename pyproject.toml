@@ -10,7 +10,7 @@ optional = true
 
 [tool.poetry.dependencies]
 python = "^3.10"
-semantha_sdk = "4.5.3"
+semantha_sdk = "4.6.0"
 streamlit= "1.18.1"
 
 [tool.poetry.group.dev.dependencies]

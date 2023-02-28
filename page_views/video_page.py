@@ -8,13 +8,14 @@ from page_views.abstract_page import AbstractPage
 _CONTROL_GROUP_VIDEO = "https://vimeo.com/803009708"
 _EXPERIMENTAL_GROUP_VIDEO = "https://vimeo.com/803009422"
 _EXPERIMENTAL_GROUP_VIDEO_LENGTH = 80
-_CONTROL_GROUP_VIDEO_LENGTH = 5
+_CONTROL_GROUP_VIDEO_LENGTH = 75
 
 
 class VideoPage(AbstractPage):
     def __init__(self, page_manager):
         self.__page_manager = page_manager
-        st.session_state.video_first_time = True
+        if "video_first_time" not in st.session_state:
+            st.session_state.video_first_time = True
 
     def display_page(self):
         st.success("🕵🏻 Vielen Dank, wir zeigen dir nun ein kurzes Erklärvideo.")

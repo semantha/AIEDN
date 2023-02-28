@@ -103,13 +103,17 @@ class Semantha:
 
         result_dict = {}
         logging.info(f"Found {len(sentence_references)} matches.")
-        if sentence_references is not None:
-            for candidate in sentence_references:
-                __ref_doc = self.__get_ref_doc(candidate.document_id, self.__domain)
-                result_dict[candidate.document_id] = {
+        filtered_lib = self.__sdk.domains(self.__domain).reference_documents \
+            .get(offset=0,
+                 limit=len(sentence_references),
+                 filter_document_ids=",".join([str(sr.document_id) for sr in sentence_references]),
+                 return_fields="id,contentpreview,tags,metadata,name")
+        if filtered_lib is not None and len(filtered_lib.documents) > 0:
+            for idx, __ref_doc in enumerate(filtered_lib.documents):
+                result_dict[__ref_doc.id] = {
                     "doc_name": __ref_doc.name,
-                    "content": self.__get_document_content(__ref_doc),
-                    "similarity": candidate.similarity,
+                    "content": __ref_doc.content_preview,
+                    "similarity": sentence_references[idx].similarity,
                     "metadata": __ref_doc.metadata,
                     "tags": set(__ref_doc.tags) - {"TRANSCRIPT_LEVEL", "SENTENCE_LEVEL", "CONTROL"},
                 }

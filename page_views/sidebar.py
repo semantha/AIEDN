@@ -65,8 +65,8 @@ class Sidebar(AbstractPage):
             if st.session_state.page >= 2:
                 st.button("📹 Video", on_click=self.__show_video_page)
             st.button("🔄 Neustart", on_click=self.restart)
-            self.__show_horizontal_line()
-            self.__debug = st.checkbox("🐞 Debug Mode", value=False)
+            # self.__show_horizontal_line()
+            # self.__debug = st.checkbox("🐞 Debug Mode", value=False)
             if self.__debug:
                 self.__debug_information()
 

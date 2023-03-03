@@ -23,7 +23,6 @@ class Sidebar(AbstractPage):
         self.__debug = False
         self.__filter_duplicates = True
         self.__show_videos_below_each_other = True
-        self.__video_skippable = False
 
     def get_max_matches(self):
         return self.__max_matches
@@ -59,9 +58,6 @@ class Sidebar(AbstractPage):
     def get_show_videos_below_each_other(self):
         return self.__show_videos_below_each_other
 
-    def get_video_skippable(self):
-        return self.__video_skippable
-
     def display_page(self):
         with st.sidebar:
             st.header("⚙️ Einstellungen")
@@ -86,7 +82,6 @@ class Sidebar(AbstractPage):
             "Enable 'Press Enter to Submit'", value=True
         )
         self.__enable_usage_tracking = st.checkbox("Enable Usage Tracking", value=True)
-        self.__video_skippable = st.checkbox("Make Intro Video Skippable", value=False)
         self.__show_horizontal_line()
         self.__max_matches = st.slider(
             "Maximum matches", min_value=0, max_value=10, value=5

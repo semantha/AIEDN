@@ -146,7 +146,7 @@ class SearchPage(AbstractPage):
         if not st.session_state.control:
             st.markdown(f'💬 **Daniel sagt:** "_{content}..._"')
         st.markdown(f"🏷️ **Tags:** _{category}_")
-        st_player(f"{str(video_id)}?#t={start}s", height=400, key=f"{video_id}_{time.time_ns()}", config={
+        st_player(f"{str(video_id)}?#t={start}s&rel=0", height=400, key=f"{video_id}_{time.time_ns()}", config={
             "vimeo": {
                 "playerOptions": {
                     "color": "#BE25BE",

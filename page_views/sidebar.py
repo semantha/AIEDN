@@ -67,6 +67,10 @@ class Sidebar(AbstractPage):
             st.button("🔄 Neustart", on_click=self.restart)
             # self.__show_horizontal_line()
             # self.__debug = st.checkbox("🐞 Debug Mode", value=False)
+            self.__show_horizontal_line()
+            st.subheader("IDs zum Testen:")
+            st.markdown("**ohne KI**: _UiiZP2H_")
+            st.markdown("**mit KI**:  _igCY5s4_")
             if self.__debug:
                 self.__debug_information()
 

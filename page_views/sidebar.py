@@ -65,19 +65,19 @@ class Sidebar(AbstractPage):
             if st.session_state.page >= 2:
                 st.button("📹 Video", on_click=self.__show_video_page)
             st.button("🔄 Neustart", on_click=self.restart)
-            # self.__show_horizontal_line()
-            # self.__debug = st.checkbox("🐞 Debug Mode", value=False)
-            self.__show_horizontal_line()
-            st.subheader("IDs zum Testen:")
-            st.markdown("**ohne KI**: _UiiZP2H_")
-            st.markdown("**mit KI**:  _igCY5s4_")
+            if st.secrets["aiedn"]["show_test_ids"] == "True":
+                self.__show_horizontal_line()
+                st.subheader("IDs zum Testen:")
+                st.markdown("**ohne KI**: _UiiZP2H_")
+                st.markdown("**mit KI**:  _igCY5s4_")
+            if st.secrets["aiedn"]["enable_debug_mode"] == "True":
+                self.__show_horizontal_line()
+                self.__debug = st.checkbox("🐞 Debug Mode", value=False)
             if self.__debug:
                 self.__debug_information()
 
     def __debug_information(self):
         st.subheader("🐞 Debug Settings")
-        st.markdown("**ID CG**: _UiiZP2H_")
-        st.markdown("**ID EG**: _igCY5s4_")
         self.__show_horizontal_line()
         self.__filter_duplicates = st.checkbox(
             "Filter Duplicates (Videos Matches w/ Same ID and Timestamp)", value=True

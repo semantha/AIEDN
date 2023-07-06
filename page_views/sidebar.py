@@ -85,7 +85,7 @@ class Sidebar(AbstractPage):
         self.__enter_to_submit = st.checkbox(
             "Enable 'Press Enter to Submit'", value=True
         )
-        self.__enable_usage_tracking = st.checkbox("Enable Usage Tracking", value=True)
+        self.__enable_usage_tracking = st.checkbox("Enable Usage Tracking", value=False)
         self.__show_horizontal_line()
         self.__max_matches = st.slider(
             "Maximum matches", min_value=0, max_value=10, value=5
